@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginViewController: UIViewController {
-
+    
     let containerView: UIView = {
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +21,7 @@ class LoginViewController: UIViewController {
     }()
     
     let registerButton: UIButton = {
-       let button = UIButton()
+        let button = UIButton()
         button.setTitle("Register", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
@@ -59,7 +60,7 @@ class LoginViewController: UIViewController {
         passwordTextField.textAlignment = .left
         return passwordTextField
     }()
-
+    
     let nameSeperatorView: UIView = {
         let lineView = UIView()
         lineView.backgroundColor = UIColor(r: 220, g: 220, b: 220)
@@ -73,7 +74,7 @@ class LoginViewController: UIViewController {
         lineView.translatesAutoresizingMaskIntoConstraints = false
         return lineView
     }()
-
+    
     let profileImageView: UIImageView = {
         let profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -94,10 +95,41 @@ class LoginViewController: UIViewController {
     func setupRegisterButton() {
         
         view.addSubview(registerButton)
+        registerButton.addTarget(self, action: #selector(register), for: .touchUpInside)
         registerButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         registerButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 12).isActive = true
         registerButton.widthAnchor.constraint(equalTo: containerView.widthAnchor, constant: -12).isActive = true
         registerButton.heightAnchor.constraint(equalToConstant: 30)
+    }
+    
+    @objc func register() {
+        
+        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { [weak self](user, error) in
+            
+            guard let name = self?.nameTextField.text, let email = self?.emailTextField.text else {return}
+            
+            if error != nil {
+                print("error is \(error)")
+                return
+            }
+            else {
+                
+                let ref = Database.database().reference(fromURL: "https://simple-chat-d11ee.firebaseio.com/")
+                let values = ["name": name,
+                              "email": email]
+                let userReference = ref.child("users").child((user?.user.uid)!)
+                userReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
+                    if error != nil {
+                        print("Error creating user")
+                        return
+                    }
+                    else {
+                        print("successfully user created")
+                    }
+                })
+            }
+        }
+        
     }
     
     func setupProfileImageView() {
