@@ -16,6 +16,10 @@ class ViewController: UITableViewController {
         
         // https://simple-chat-d11ee.firebaseio.com/
         
+        if Auth.auth().currentUser?.uid == nil {
+            handleLogout()
+        }
+        
         
         view.backgroundColor = .white
         let logOutButton = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleLogout))
@@ -23,6 +27,12 @@ class ViewController: UITableViewController {
     }
     
     @objc func handleLogout() {
+        
+        do {
+            try Auth.auth().signOut()
+
+        } catch {print(error)}
+        
         let viewController = LoginViewController()
         self.present(viewController, animated: true, completion: nil)
         
