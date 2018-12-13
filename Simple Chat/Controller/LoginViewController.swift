@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginViewController: UIViewController {
 
@@ -94,10 +95,41 @@ class LoginViewController: UIViewController {
     func setupRegisterButton() {
         
         view.addSubview(registerButton)
+        registerButton.addTarget(self, action: #selector(register), for: .touchUpInside)
         registerButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         registerButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 12).isActive = true
         registerButton.widthAnchor.constraint(equalTo: containerView.widthAnchor, constant: -12).isActive = true
         registerButton.heightAnchor.constraint(equalToConstant: 30)
+    }
+    
+  @objc func register() {
+    
+    Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { [weak self](user, error) in
+        
+        guard let name = self?.nameTextField.text, let email = self?.emailTextField.text else {return}
+        
+        if error != nil {
+            print("error is \(error)")
+            return
+        }
+        else {
+
+            let ref = Database.database().reference(fromURL: "https://simple-chat-d11ee.firebaseio.com/")
+            let values = ["name": name,
+                          "email": email]
+            let userReference = ref.child("users").child((user?.user.uid)!)
+            userReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
+                if error != nil {
+                    print("Error creating user")
+                    return
+                }
+                else {
+                    print("successfully user created")
+                }
+            })
+        }
+    }
+
     }
     
     func setupProfileImageView() {
