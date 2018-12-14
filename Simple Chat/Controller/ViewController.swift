@@ -16,14 +16,41 @@ class ViewController: UITableViewController {
         
         // https://simple-chat-d11ee.firebaseio.com/
         
-        if Auth.auth().currentUser?.uid == nil {
-            handleLogout()
-        }
-        
-        
         view.backgroundColor = .white
         let logOutButton = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleLogout))
         navigationItem.leftBarButtonItem = logOutButton
+        let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
+        navigationItem.rightBarButtonItem = newMessageButton
+        
+        checkUserLoggedIn()
+    }
+    
+    @objc func newMessageTapped() {
+        
+        let messageViewController = MessageViewController()
+        let navController = UINavigationController(rootViewController: messageViewController)
+        present(navController, animated: true, completion: nil)
+    }
+    
+    func checkUserLoggedIn() {
+        
+        if Auth.auth().currentUser?.uid == nil {
+            handleLogout()
+        }
+        else {
+            guard  let uid = Auth.auth().currentUser?.uid else {return}
+            Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+                
+                if let dictionary = snapshot.value as? [String: Any] {
+                    self.navigationItem.title = dictionary["name"] as? String
+                }
+                
+                
+
+            }
+        }
+        
+
     }
     
     @objc func handleLogout() {
