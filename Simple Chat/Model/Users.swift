@@ -12,4 +12,5 @@ class Users: NSObject {
     
    @objc  var name: String?
     @objc var email: String?
+    @objc var imageurl: String?
 }

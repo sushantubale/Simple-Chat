@@ -144,9 +144,9 @@
 		0AEE886421C18C2200D03B0D /* Simple Chat */ = {
 			isa = PBXGroup;
 			children = (
-				0A51F07321C377F600C7D907 /* Model */,
 				0A10B38F21C24B7400F7DB07 /* GoogleService-Info.plist */,
 				0AEE886521C18C2200D03B0D /* AppDelegate.swift */,
+				0A51F07321C377F600C7D907 /* Model */,
 				0A4AD0A521C1A003006C8445 /* Controller */,
 				0AEE886921C18C2200D03B0D /* Main.storyboard */,
 				0AEE886F21C18C2300D03B0D /* Assets.xcassets */,

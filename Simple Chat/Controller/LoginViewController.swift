@@ -80,11 +80,13 @@ class LoginViewController: UIViewController {
         return lineView
     }()
     
-    let profileImageView: UIImageView = {
+    lazy var profileImageView: UIImageView = {
         let profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.image = UIImage(named: "profile_placeholder.jpg")
         profileImageView.contentMode = .scaleAspectFill
+        profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleProfileImageTapped)))
+        profileImageView.isUserInteractionEnabled = true
         return profileImageView
     }()
     
@@ -149,6 +151,7 @@ class LoginViewController: UIViewController {
     }
     
     func handlelogin() {
+        
         guard let email = emailTextField.text, let password = passwordTextField.text else {return}
 
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
@@ -171,22 +174,33 @@ class LoginViewController: UIViewController {
                 print("error is \(String(describing: error))")
                 return
             }
-            else {
+            
+            let storageRef = Storage.storage().reference().child("myProfileImage.png")
+            
+            if let uploadData = self?.profileImageView.image?.pngData() {
                 
-                let ref = Database.database().reference(fromURL: "https://simple-chat-d11ee.firebaseio.com/")
-                let values = ["name": name,
-                              "email": email]
-                let userReference = ref.child("users").child((user?.user.uid)!)
-                userReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
-                    if error != nil {
-                        print("Error creating user")
+                storageRef.putData(uploadData, metadata: nil, completion: { (metadata, err) in
+                    
+                    if err != nil {
+                        print(err!)
                         return
                     }
-                    else {
+                    
+                    storageRef.downloadURL(completion: { [weak self] (url, err) in
+                        if err != nil {
+                            print("failed to download url")
+                        }
                         
-                        self?.dismiss(animated: true, completion: nil)
-                    }
+                        let profileImageURL = url?.absoluteString
+                        let values = ["name": name,
+                                      "email": email,
+                                      "imageurl": profileImageURL]
+                        guard let uid = user?.user.uid else {return}
+                        
+                        self?.storeUserData(uid: uid, values: values as [String : AnyObject])
+                    })
                 })
+                
             }
         }
     }
@@ -201,9 +215,23 @@ class LoginViewController: UIViewController {
         
     }
     
+    private func storeUserData(uid: String, values: [String: AnyObject]) {
+        
+        let ref = Database.database().reference(fromURL: "https://simple-chat-d11ee.firebaseio.com/")
+        let userReference = ref.child("users").child(uid)
+        userReference.updateChildValues(values, withCompletionBlock: { [weak self] (error, reference) in
+            if error != nil {
+                print("Error creating user")
+                return
+            }
+            
+            self?.dismiss(animated: true, completion: nil)
+        })
+    }
     func setupProfileImageView() {
         
         self.view.addSubview(profileImageView)
+        profileImageView.isUserInteractionEnabled = true
         profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
@@ -279,5 +307,39 @@ extension UIColor {
     
     convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {
         self.init(red: r/255, green: g/255, blue: b/255, alpha: 1)
+    }
+}
+
+extension LoginViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    @objc func handleProfileImageTapped() {
+        
+        let pickerViewController = UIImagePickerController()
+        pickerViewController.delegate = self
+        pickerViewController.allowsEditing = true
+        present(pickerViewController, animated: true, completion: nil)
+    }
+    
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        var selectedImage: UIImage?
+        print(info)
+        
+        if let editedImage = info[.editedImage] as? UIImage {
+            selectedImage = editedImage
+        }
+        else if let orignalImage = info[.originalImage] as? UIImage {
+            selectedImage = orignalImage
+        }
+        
+        DispatchQueue.main.async {
+            self.profileImageView.image = selectedImage
+        }
+        dismiss(animated: true, completion: nil)
     }
 }
