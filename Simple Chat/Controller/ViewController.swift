@@ -22,6 +22,11 @@ class ViewController: UITableViewController {
         let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
         navigationItem.rightBarButtonItem = newMessageButton
         
+//        checkUserLoggedIn()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         checkUserLoggedIn()
     }
     
@@ -42,7 +47,9 @@ class ViewController: UITableViewController {
             Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
                 
                 if let dictionary = snapshot.value as? [String: Any] {
-                    self.navigationItem.title = dictionary["name"] as? String
+                    DispatchQueue.main.async {
+                        self.navigationItem.title = dictionary["name"] as? String
+                    }
                 }
                 
                 

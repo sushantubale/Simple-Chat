@@ -174,8 +174,9 @@ class LoginViewController: UIViewController {
                 print("error is \(String(describing: error))")
                 return
             }
-            
-            let storageRef = Storage.storage().reference().child("myProfileImage.png")
+            let imageName = NSUUID().uuidString
+
+            let storageRef = Storage.storage().reference().child(imageName)
             
             if let uploadData = self?.profileImageView.image?.pngData() {
                 
@@ -217,7 +218,7 @@ class LoginViewController: UIViewController {
     
     private func storeUserData(uid: String, values: [String: AnyObject]) {
         
-        let ref = Database.database().reference(fromURL: "https://simple-chat-d11ee.firebaseio.com/")
+        let ref = Database.database().reference(fromURL: "https://simple-chat-26867.firebaseio.com/")
         let userReference = ref.child("users").child(uid)
         userReference.updateChildValues(values, withCompletionBlock: { [weak self] (error, reference) in
             if error != nil {
