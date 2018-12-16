@@ -13,6 +13,8 @@ class MessageViewController: UITableViewController {
 
     static let cellId = "cell"
     var users = [Users]()
+    var imageCache: NSCache<AnyObject,AnyObject>?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +53,10 @@ class MessageViewController: UITableViewController {
         return 1
     }
 
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 76.0
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return users.count
@@ -58,15 +64,58 @@ class MessageViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: MessageViewController.cellId)
-        let cell = tableView.dequeueReusableCell(withIdentifier: MessageViewController.cellId, for: indexPath)
-        let user = users[indexPath.row]
-        cell.textLabel?.text = user.name
-        cell.detailTextLabel?.text = user.email
-        return cell
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: MessageViewController.cellId, for: indexPath) as? UserCell
+        
+        if let cell1 = cell {
+            let user = users[indexPath.row]
+            cell1.textLabel?.text = user.name
+            cell1.detailTextLabel?.text = user.email
+            
+            if let profileImageURL = user.imageurl {
+                
+                self.loadProfileImage(profileImageURL, cell1, tableView)
+            }
+            return cell1
+
+        }
+        return cell!
     }
     
+    
+    private func loadProfileImage(_ url: String,_ cell: UserCell,_ tableviewObject: UITableView) {
+        
+        self.imageCache = nil
+        if let imageCache = imageCache {
+            if let imageCached = imageCache.object(forKey: url as AnyObject) as? UIImage  {
+                cell.profileImageView.image = imageCached
+                return
+            }
+        }
 
+        
+        if let url = URL(string: url) {
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                if error != nil  {
+                    print("Error getting the profile image")
+                    return
+                }
+                
+                if let data = data {
+                    DispatchQueue.main.async {
+                    
+                        if let downloadedImage = UIImage(data: data) {
+                            self.imageCache?.setValue(downloadedImage, forKey: url.absoluteString)
+                            cell.profileImageView.image = UIImage(data: data)
+
+                        }
+                        //tableviewObject.reloadData()
+                        
+                    }
+                }
+                }.resume()
+        }
+    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -117,8 +166,36 @@ class MessageViewController: UITableViewController {
 
 class UserCell: UITableViewCell {
     
+    var profileImageView: UIImageView = {
+    let imageView = UIImageView()
+        imageView.image = UIImage(named: "")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if let textLabel = textLabel, let detailTextLabel = detailTextLabel {
+            textLabel.frame = CGRect(x: 76, y: textLabel.frame.origin.y - 2, width: textLabel.frame.width, height: textLabel.frame.height)
+            detailTextLabel.frame = CGRect(x: 76, y: detailTextLabel.frame.origin.y + 2, width: detailTextLabel.frame.width, height: detailTextLabel.frame.height)
+            
+            textLabel.font = UIFont.boldSystemFont(ofSize: 16)
+            detailTextLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        }
+    }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        
+        addSubview(profileImageView)
+        
+        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+        profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

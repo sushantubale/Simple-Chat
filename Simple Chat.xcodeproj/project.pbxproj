@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A10B39021C24B7400F7DB07 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A10B38F21C24B7400F7DB07 /* GoogleService-Info.plist */; };
 		0A4AD0A221C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
 		0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
 		0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
@@ -27,6 +26,7 @@
 		0AEE887321C18C2300D03B0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AEE887121C18C2300D03B0D /* LaunchScreen.storyboard */; };
 		0AEE887E21C18C2300D03B0D /* Simple_ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE887D21C18C2300D03B0D /* Simple_ChatTests.swift */; };
 		0AEE888921C18C2300D03B0D /* Simple_ChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE888821C18C2300D03B0D /* Simple_ChatUITests.swift */; };
+		0AFF5ED521C6082700F0A54E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +47,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0A10B38F21C24B7400F7DB07 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		0A4AD0A621C1C8F0006C8445 /* profile_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile_picture.png; sourceTree = "<group>"; };
 		0A4AD0A821C1CADD006C8445 /* profile_placeholder.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = profile_placeholder.jpg; sourceTree = "<group>"; };
@@ -67,6 +66,7 @@
 		0AEE888421C18C2300D03B0D /* Simple ChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Simple ChatUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AEE888821C18C2300D03B0D /* Simple_ChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simple_ChatUITests.swift; sourceTree = "<group>"; };
 		0AEE888A21C18C2300D03B0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,8 +144,8 @@
 		0AEE886421C18C2200D03B0D /* Simple Chat */ = {
 			isa = PBXGroup;
 			children = (
-				0A10B38F21C24B7400F7DB07 /* GoogleService-Info.plist */,
 				0AEE886521C18C2200D03B0D /* AppDelegate.swift */,
+				0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */,
 				0A51F07321C377F600C7D907 /* Model */,
 				0A4AD0A521C1A003006C8445 /* Controller */,
 				0AEE886921C18C2200D03B0D /* Main.storyboard */,
@@ -285,7 +285,7 @@
 				0A4AD0A721C1C8F0006C8445 /* profile_picture.png in Resources */,
 				0A4AD0A921C1CADD006C8445 /* profile_placeholder.jpg in Resources */,
 				0AEE886B21C18C2200D03B0D /* Main.storyboard in Resources */,
-				0A10B39021C24B7400F7DB07 /* GoogleService-Info.plist in Resources */,
+				0AFF5ED521C6082700F0A54E /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
