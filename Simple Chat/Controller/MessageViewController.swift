@@ -85,6 +85,7 @@ class MessageViewController: UITableViewController {
     
     private func loadProfileImage(_ url: String,_ cell: UserCell,_ tableviewObject: UITableView) {
         
+        self.imageCache = nil
         if let imageCache = imageCache {
             if let imageCached = imageCache.object(forKey: url as AnyObject) as? UIImage  {
                 cell.profileImageView.image = imageCached
@@ -171,6 +172,7 @@ class UserCell: UITableViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
