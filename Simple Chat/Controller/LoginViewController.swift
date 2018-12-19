@@ -15,7 +15,8 @@ class LoginViewController: UIViewController {
     var nameTextfieldHeightConstraint: NSLayoutConstraint?
     var emailTextfieldHeightConstraint: NSLayoutConstraint?
     var passwordTextfieldHeightConstraint: NSLayoutConstraint?
-
+    var viewController: ViewController? = nil
+    
     let containerView: UIView = {
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -159,6 +160,7 @@ class LoginViewController: UIViewController {
                 print("error = \(String(describing: error))")
             }
             else {
+                self.viewController?.fetchUserAndSetNavTitle()
                 self.dismiss(animated: true, completion: nil)
             }
         }
@@ -175,12 +177,14 @@ class LoginViewController: UIViewController {
                 return
             }
             let imageName = NSUUID().uuidString
-
+            
             let storageRef = Storage.storage().reference().child(imageName)
             
-            if let uploadData = self?.profileImageView.image?.pngData() {
-                
-                storageRef.putData(uploadData, metadata: nil, completion: { (metadata, err) in
+            
+                if let compressedImage = self?.profileImageView.image?.jpegData(compressionQuality: 0.1) {
+                    
+               
+                storageRef.putData(compressedImage, metadata: nil, completion: { (metadata, err) in
                     
                     if err != nil {
                         print(err!)
@@ -225,7 +229,7 @@ class LoginViewController: UIViewController {
                 print("Error creating user")
                 return
             }
-            
+            self?.viewController?.fetchUserAndSetNavTitle()
             self?.dismiss(animated: true, completion: nil)
         })
     }

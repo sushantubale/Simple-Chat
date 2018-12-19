@@ -11,6 +11,22 @@ import Firebase
 
 class ViewController: UITableViewController {
     
+    let navBarImageView:UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 20
+        image.layer.masksToBounds = true
+        return image
+    }()
+    
+    let  navBarTitle: UILabel = {
+      let navBarTitle = UILabel()
+        navBarTitle.translatesAutoresizingMaskIntoConstraints = false
+        return navBarTitle
+    }()
+    
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,7 +38,6 @@ class ViewController: UITableViewController {
         let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
         navigationItem.rightBarButtonItem = newMessageButton
         
-//        checkUserLoggedIn()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,22 +58,66 @@ class ViewController: UITableViewController {
             handleLogout()
         }
         else {
-            guard  let uid = Auth.auth().currentUser?.uid else {return}
-            Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+            fetchUserAndSetNavTitle()
+        }
+    }
+    
+    func fetchUserAndSetNavTitle() {
+        
+        guard  let uid = Auth.auth().currentUser?.uid else {return}
+        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { [weak self] (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: Any] {
+                let name = dictionary["name"] as? String
+                self?.getProfileImage(dictionary["imageurl"] as! String , completionHandler: { [weak self] (image) -> (Void) in
+                    self?.navBarImageView.image = image
+                })
                 
-                if let dictionary = snapshot.value as? [String: Any] {
-                    DispatchQueue.main.async {
-                        self.navigationItem.title = dictionary["name"] as? String
-                    }
-                }
+                let titleview = UIView()
+                titleview.layer.cornerRadius = 20
+                titleview.layer.masksToBounds = true
+                self?.navigationItem.titleView = titleview
+                titleview.backgroundColor = .white
+                titleview.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+                titleview.addSubview((self?.navBarImageView)!)
+                titleview.addSubview((self?.navBarTitle)!)
+                self?.navBarTitle.text = name
+                self?.navBarImageView.leftAnchor.constraint(equalTo: titleview.leftAnchor).isActive = true
+                self?.navBarImageView.centerYAnchor.constraint(equalTo: titleview.centerYAnchor).isActive = true
+                self?.navBarImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
+                self?.navBarImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
                 
+                self?.navBarTitle.leftAnchor.constraint(equalTo: (self?.navBarImageView.leftAnchor)!, constant: 50).isActive = true
+                self?.navBarTitle.topAnchor.constraint(equalTo: titleview.topAnchor, constant: 10).isActive = true
                 
 
             }
         }
-        
 
     }
+    
+    func getProfileImage(_ url: String, completionHandler: @escaping (UIImage) -> (Void)) {
+        
+        if let url = URL(string: url) {
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                
+                if error != nil  {
+                    print("Error getting the profile image")
+                    return
+                }
+                if let data = data {
+                    DispatchQueue.main.async {
+                        
+                        if let downloadedImage = UIImage(data: data) {
+                            completionHandler(downloadedImage)
+                        }
+                        
+                    }
+                }
+                }.resume()
+        }
+    }
+    
     
     @objc func handleLogout() {
         
@@ -68,6 +127,7 @@ class ViewController: UITableViewController {
         } catch {print(error)}
         
         let viewController = LoginViewController()
+        viewController.viewController = self
         self.present(viewController, animated: true, completion: nil)
         
         
