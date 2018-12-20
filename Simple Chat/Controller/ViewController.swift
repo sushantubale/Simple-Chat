@@ -40,11 +40,11 @@ class ViewController: UITableViewController {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         checkUserLoggedIn()
     }
-    
+        
     @objc func newMessageTapped() {
         
         let messageViewController = MessageViewController()
@@ -90,10 +90,17 @@ class ViewController: UITableViewController {
                 self?.navBarTitle.leftAnchor.constraint(equalTo: (self?.navBarImageView.leftAnchor)!, constant: 50).isActive = true
                 self?.navBarTitle.topAnchor.constraint(equalTo: titleview.topAnchor, constant: 10).isActive = true
                 
-
+                let tap = UITapGestureRecognizer(target: self, action: #selector(self?.openChatLogController))
+                titleview.addGestureRecognizer(tap)
             }
         }
-
+    }
+    
+    @objc func openChatLogController() {
+        
+        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(chatLogController, animated: true)
+        
     }
     
     func getProfileImage(_ url: String, completionHandler: @escaping (UIImage) -> (Void)) {
