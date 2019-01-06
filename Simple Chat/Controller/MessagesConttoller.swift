@@ -9,8 +9,12 @@
 import UIKit
 import Firebase
 
-class ViewController: UITableViewController {
+class MessagesConttoller: UITableViewController {
     
+    var imageCache: NSCache<AnyObject,AnyObject>?
+
+    static let cellID = "cell"
+    var messages = [Message]()
     let navBarImageView:UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -25,19 +29,35 @@ class ViewController: UITableViewController {
         return navBarTitle
     }()
     
-
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // https://simple-chat-d11ee.firebaseio.com/
-        
+        tableView.register(UserCell.self, forCellReuseIdentifier: MessagesConttoller.cellID)
         view.backgroundColor = .white
         let logOutButton = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleLogout))
         navigationItem.leftBarButtonItem = logOutButton
         let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
         navigationItem.rightBarButtonItem = newMessageButton
         
+        observeMessages()
+        
+    }
+    
+    func observeMessages() {
+        
+        let ref = Database.database().reference().child("messages")
+        ref.observe(.childAdded, with: {[weak self] (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+                self?.messages.append(message)
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()
+                }
+            }
+        }, withCancel: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -89,18 +109,72 @@ class ViewController: UITableViewController {
                 
                 self?.navBarTitle.leftAnchor.constraint(equalTo: (self?.navBarImageView.leftAnchor)!, constant: 50).isActive = true
                 self?.navBarTitle.topAnchor.constraint(equalTo: titleview.topAnchor, constant: 10).isActive = true
-                
-                let tap = UITapGestureRecognizer(target: self, action: #selector(self?.openChatLogController))
-                titleview.addGestureRecognizer(tap)
             }
         }
     }
     
-    @objc func openChatLogController() {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 76.0
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        let cell = tableView.dequeueReusableCell(withIdentifier: MessagesConttoller.cellID, for: indexPath) as? UserCell
+        if let cell = cell {
+        if let toId = messages[indexPath.row].toid {
+            let ref = Database.database().reference().child("users").child(toId)
+            ref.observe(.value, with: { (snapshot) in
+
+                if let dictionary = snapshot.value as? [String: AnyObject] {
+                    cell.textLabel?.text = dictionary["name"] as? String
+                    if let profileImageURL = dictionary["imageurl"] {
+                        self.loadProfileImage(profileImageURL as! String, cell, tableView)
+                    }
+                }
+            }, withCancel: nil)
+        }
+
+        cell.detailTextLabel?.text = messages[indexPath.row].text
+            return cell
+
+        }
+        return cell!
+    }
+    
+    private func loadProfileImage(_ url: String,_ cell: UserCell,_ tableviewObject: UITableView) {
         
-        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
-        navigationController?.pushViewController(chatLogController, animated: true)
+        self.imageCache = nil
+        if let imageCache = imageCache {
+            if let imageCached = imageCache.object(forKey: url as AnyObject) as? UIImage  {
+                cell.profileImageView.image = imageCached
+                return
+            }
+        }
         
+        
+        if let url = URL(string: url) {
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                if error != nil  {
+                    print("Error getting the profile image")
+                    return
+                }
+                
+                if let data = data {
+                    DispatchQueue.main.async {
+                        
+                        if let downloadedImage = UIImage(data: data) {
+                            self.imageCache?.setValue(downloadedImage, forKey: url.absoluteString)
+                            cell.profileImageView.image = UIImage(data: data)
+                            
+                        }
+                    }
+                }
+                }.resume()
+        }
     }
     
     func getProfileImage(_ url: String, completionHandler: @escaping (UIImage) -> (Void)) {
@@ -125,7 +199,6 @@ class ViewController: UITableViewController {
         }
     }
     
-    
     @objc func handleLogout() {
         
         do {
@@ -136,9 +209,5 @@ class ViewController: UITableViewController {
         let viewController = LoginViewController()
         viewController.viewController = self
         self.present(viewController, animated: true, completion: nil)
-        
-        
     }
-    
-    
 }

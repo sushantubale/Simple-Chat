@@ -15,7 +15,7 @@ class LoginViewController: UIViewController {
     var nameTextfieldHeightConstraint: NSLayoutConstraint?
     var emailTextfieldHeightConstraint: NSLayoutConstraint?
     var passwordTextfieldHeightConstraint: NSLayoutConstraint?
-    var viewController: ViewController? = nil
+    var viewController: MessagesConttoller? = nil
     
     let containerView: UIView = {
         let containerView = UIView()

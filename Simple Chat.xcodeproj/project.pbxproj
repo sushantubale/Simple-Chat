@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A13559A21CC4BBE002D2DCC /* MessagesConttoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */; };
 		0A21622D21CAE37F0046859B /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A21622C21CAE37F0046859B /* ChatLogController.swift */; };
 		0A21622E21CAE37F0046859B /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A21622C21CAE37F0046859B /* ChatLogController.swift */; };
 		0A21622F21CAE37F0046859B /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A21622C21CAE37F0046859B /* ChatLogController.swift */; };
@@ -22,13 +23,15 @@
 		0A51F07621C3780300C7D907 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51F07421C3780300C7D907 /* Users.swift */; };
 		0A51F07721C3780300C7D907 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51F07421C3780300C7D907 /* Users.swift */; };
 		0AEE886621C18C2200D03B0D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886521C18C2200D03B0D /* AppDelegate.swift */; };
-		0AEE886821C18C2200D03B0D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886721C18C2200D03B0D /* ViewController.swift */; };
 		0AEE886B21C18C2200D03B0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AEE886921C18C2200D03B0D /* Main.storyboard */; };
 		0AEE886E21C18C2200D03B0D /* Simple_Chat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886C21C18C2200D03B0D /* Simple_Chat.xcdatamodeld */; };
 		0AEE887021C18C2300D03B0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AEE886F21C18C2300D03B0D /* Assets.xcassets */; };
 		0AEE887321C18C2300D03B0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AEE887121C18C2300D03B0D /* LaunchScreen.storyboard */; };
 		0AEE887E21C18C2300D03B0D /* Simple_ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE887D21C18C2300D03B0D /* Simple_ChatTests.swift */; };
 		0AEE888921C18C2300D03B0D /* Simple_ChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE888821C18C2300D03B0D /* Simple_ChatUITests.swift */; };
+		0AEFE54121DEBD75007B7807 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEFE54021DEBD75007B7807 /* Message.swift */; };
+		0AEFE54221DEBD75007B7807 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEFE54021DEBD75007B7807 /* Message.swift */; };
+		0AEFE54321DEBD75007B7807 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEFE54021DEBD75007B7807 /* Message.swift */; };
 		0AFF5ED521C6082700F0A54E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +61,7 @@
 		0A51F07421C3780300C7D907 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		0AEE886221C18C2200D03B0D /* Simple Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simple Chat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AEE886521C18C2200D03B0D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		0AEE886721C18C2200D03B0D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesConttoller.swift; sourceTree = "<group>"; };
 		0AEE886A21C18C2200D03B0D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0AEE886D21C18C2200D03B0D /* Simple_Chat.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Simple_Chat.xcdatamodel; sourceTree = "<group>"; };
 		0AEE886F21C18C2300D03B0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -70,6 +73,7 @@
 		0AEE888421C18C2300D03B0D /* Simple ChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Simple ChatUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AEE888821C18C2300D03B0D /* Simple_ChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simple_ChatUITests.swift; sourceTree = "<group>"; };
 		0AEE888A21C18C2300D03B0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0AEFE54021DEBD75007B7807 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,7 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */,
-				0AEE886721C18C2200D03B0D /* ViewController.swift */,
+				0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */,
 				0A51F06F21C3748B00C7D907 /* MessageViewController.swift */,
 				0A21622C21CAE37F0046859B /* ChatLogController.swift */,
 			);
@@ -122,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				0A51F07421C3780300C7D907 /* Users.swift */,
+				0AEFE54021DEBD75007B7807 /* Message.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -315,11 +320,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A13559A21CC4BBE002D2DCC /* MessagesConttoller.swift in Sources */,
 				0A4AD0A221C19FFA006C8445 /* LoginViewController.swift in Sources */,
-				0AEE886821C18C2200D03B0D /* ViewController.swift in Sources */,
 				0AEE886621C18C2200D03B0D /* AppDelegate.swift in Sources */,
 				0A21622D21CAE37F0046859B /* ChatLogController.swift in Sources */,
 				0AEE886E21C18C2200D03B0D /* Simple_Chat.xcdatamodeld in Sources */,
+				0AEFE54121DEBD75007B7807 /* Message.swift in Sources */,
 				0A51F07521C3780300C7D907 /* Users.swift in Sources */,
 				0A51F07021C3748B00C7D907 /* MessageViewController.swift in Sources */,
 			);
@@ -332,6 +338,7 @@
 				0A21622E21CAE37F0046859B /* ChatLogController.swift in Sources */,
 				0A51F07621C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */,
+				0AEFE54221DEBD75007B7807 /* Message.swift in Sources */,
 				0A51F07121C3748B00C7D907 /* MessageViewController.swift in Sources */,
 				0AEE887E21C18C2300D03B0D /* Simple_ChatTests.swift in Sources */,
 			);
@@ -344,6 +351,7 @@
 				0A21622F21CAE37F0046859B /* ChatLogController.swift in Sources */,
 				0A51F07721C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */,
+				0AEFE54321DEBD75007B7807 /* Message.swift in Sources */,
 				0A51F07221C3748B00C7D907 /* MessageViewController.swift in Sources */,
 				0AEE888921C18C2300D03B0D /* Simple_ChatUITests.swift in Sources */,
 			);
