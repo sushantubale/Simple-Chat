@@ -11,6 +11,12 @@ import Firebase
 
 class ChatLogController: UICollectionViewController, UITextFieldDelegate {
     
+    var chatLogUser: Users?  {
+        didSet {
+            navigationItem.title = chatLogUser?.name
+        }
+    }
+    var backButtonName: String?
     lazy var sendMessageTextField: UITextField = {
     let sendMessageTextField = UITextField()
     sendMessageTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -20,6 +26,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
 
         return sendMessageTextField
     }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.backgroundColor = .white
@@ -79,7 +86,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
         seperatorView.bottomAnchor.constraint(lessThanOrEqualTo: sendMessageView.topAnchor).isActive = true
         seperatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
     }
-    
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         return true
     }
@@ -88,8 +95,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
         
         let reference = Database.database().reference().child("messages")
         let messageReference = reference.childByAutoId()
+    let fromId = Auth.auth().currentUser?.uid
+    let timestamp = Date().timeIntervalSince1970
+    
     if let messageText = sendMessageTextField.text {
-        let values = ["text": messageText]
+        let values = ["fromid": fromId as Any, "toid": chatLogUser?.id as Any,"text": messageText, "timestamp": timestamp]
         messageReference.updateChildValues(values)
     }
     

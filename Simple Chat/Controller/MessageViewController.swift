@@ -32,6 +32,7 @@ class MessageViewController: UITableViewController {
             
             if let dictionary = snapshot.value as? [String: Any] {
                 let user = Users()
+                user.id = snapshot.key
                 user.setValuesForKeys(dictionary)
                 self?.users.append(user)
             }
@@ -62,6 +63,13 @@ class MessageViewController: UITableViewController {
         return users.count
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
+        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        let user = users[indexPath.row]
+        chatLogController.chatLogUser = user
+        navigationController?.pushViewController(chatLogController, animated: true)
+
+    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
