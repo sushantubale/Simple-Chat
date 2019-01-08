@@ -29,6 +29,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboard()
         collectionView.backgroundColor = .white
         setupSendMessageView()
     }
@@ -91,17 +92,49 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
         return true
     }
     
-   @objc func handleSend() {
+    @objc func handleSend() {
         
         let reference = Database.database().reference().child("messages")
-        let messageReference = reference.childByAutoId()
-    let fromId = Auth.auth().currentUser?.uid
-    let timestamp = Date().timeIntervalSince1970
-    
-    if let messageText = sendMessageTextField.text {
-        let values = ["fromid": fromId as Any, "toid": chatLogUser?.id as Any,"text": messageText, "timestamp": timestamp]
-        messageReference.updateChildValues(values)
+        let childRef = reference.childByAutoId()
+        let fromId = Auth.auth().currentUser?.uid
+        let toID = chatLogUser?.id
+        let timestamp = Date().timeIntervalSince1970
+        
+        if let messageText = sendMessageTextField.text {
+            let values = ["fromid": fromId as Any, "toid": toID as Any,"text": messageText, "timestamp": timestamp]
+            
+            childRef.updateChildValues(values) { (error, ref) in
+                if error != nil {
+                    print(error ?? "")
+                    return
+                }
+                guard let messageId = childRef.key else { return }
+                
+                let userMessagesRef = Database.database().reference().child("user-messages").child(fromId!).child(messageId)
+                userMessagesRef.setValue(1)
+                
+                let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!).child(messageId)
+                recipientUserMessagesRef.setValue(1)
+                
+            }
+        }
+    }
+}
+
+extension ChatLogController
+{
+    func hideKeyboard()
+    {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(ChatLogController.dismissKeyboard))
+        
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
     }
     
+    @objc func dismissKeyboard()
+    {
+        view.endEditing(true)
     }
 }

@@ -27,7 +27,6 @@ class MessageViewController: UITableViewController {
     }
 
     func fetchUsers() {
-        
         Database.database().reference().child("users").observe(.childAdded, with: { [weak self] (snapshot) in
             
             if let dictionary = snapshot.value as? [String: Any] {
@@ -117,7 +116,6 @@ class MessageViewController: UITableViewController {
                             cell.profileImageView.image = UIImage(data: data)
 
                         }
-                        //tableviewObject.reloadData()
                         
                     }
                 }
@@ -184,6 +182,12 @@ class UserCell: UITableViewCell {
         return imageView
     }()
     
+    var timeLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -195,15 +199,22 @@ class UserCell: UITableViewCell {
             detailTextLabel.font = UIFont.boldSystemFont(ofSize: 16)
         }
     }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         
         addSubview(profileImageView)
+        addSubview(timeLabel)
         
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        profileImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+    profileImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        
+        timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
+        timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
+        timeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        timeLabel.heightAnchor.constraint(equalTo: (textLabel?.heightAnchor)!).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
