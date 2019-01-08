@@ -12,7 +12,7 @@ import Firebase
 class MessagesConttoller: UITableViewController {
     
     var imageCache: NSCache<AnyObject,AnyObject>?
-
+    var messagesDictionary = [String: Message]()
     static let cellID = "cell"
     var messages = [Message]()
     let navBarImageView:UIImageView = {
@@ -40,7 +40,49 @@ class MessagesConttoller: UITableViewController {
         let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
         navigationItem.rightBarButtonItem = newMessageButton
         
-        observeMessages()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    func observeUserMessages() {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let userMessageRef = Database.database().reference().child("user-messages").child(uid)
+        userMessageRef.observe(.childAdded, with: { (snapshot) in
+            
+            let messageId = snapshot.key
+            let messageReferences = Database.database().reference().child("messages").child(messageId)
+            messageReferences.observe(.value, with: {[weak self] (snapshot) in
+                
+                self?.addDataToTableView(snapshot: snapshot)
+            }, withCancel: nil)
+        }, withCancel: nil)
+    }
+    
+    func addDataToTableView(snapshot: DataSnapshot) {
+        
+        if let dictionary = snapshot.value as? [String: AnyObject] {
+            let message = Message()
+            message.setValuesForKeys(dictionary)
+            
+            if let toid = message.toid {
+                self.messagesDictionary[toid] = message
+            }
+                self.messages = Array(self.messagesDictionary.values)
+            
+            
+            self.messages.sorted(by: { (message1, message2) -> Bool in
+                return message2.timestamp!.intValue > message1.timestamp!.intValue
+            })
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
         
     }
     
@@ -52,7 +94,17 @@ class MessagesConttoller: UITableViewController {
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 let message = Message()
                 message.setValuesForKeys(dictionary)
-                self?.messages.append(message)
+                
+                if let toid = message.toid {
+                    self?.messagesDictionary[toid] = message
+                }
+                if let values = self?.messagesDictionary.values {
+                    self?.messages = Array(values)
+                }
+                
+                self?.messages.sorted(by: { (message1, message2) -> Bool in
+                    return message2.timestamp!.intValue > message1.timestamp!.intValue
+                })
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()
                 }
@@ -84,6 +136,11 @@ class MessagesConttoller: UITableViewController {
     
     func fetchUserAndSetNavTitle() {
         
+        messages.removeAll()
+        messagesDictionary.removeAll()
+        tableView.reloadData()
+        self.observeUserMessages()
+
         guard  let uid = Auth.auth().currentUser?.uid else {return}
         Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { [weak self] (snapshot) in
             
@@ -92,7 +149,6 @@ class MessagesConttoller: UITableViewController {
                 self?.getProfileImage(dictionary["imageurl"] as! String , completionHandler: { [weak self] (image) -> (Void) in
                     self?.navBarImageView.image = image
                 })
-                
                 let titleview = UIView()
                 titleview.layer.cornerRadius = 20
                 titleview.layer.masksToBounds = true
@@ -125,24 +181,43 @@ class MessagesConttoller: UITableViewController {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: MessagesConttoller.cellID, for: indexPath) as? UserCell
         if let cell = cell {
-        if let toId = messages[indexPath.row].toid {
-            let ref = Database.database().reference().child("users").child(toId)
-            ref.observe(.value, with: { (snapshot) in
+            setNameAndProfileImage(cell, indexPath: indexPath)
+        }
+            let timeStampDate = NSDate(timeIntervalSince1970: (messages[indexPath.row].timestamp?.doubleValue)!)
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hh:mm:ss"
+            cell?.timeLabel.text = dateFormatter.string(from: timeStampDate as Date)
+            cell?.detailTextLabel?.text = messages[indexPath.row].text
+            return cell!
 
-                if let dictionary = snapshot.value as? [String: AnyObject] {
-                    cell.textLabel?.text = dictionary["name"] as? String
-                    if let profileImageURL = dictionary["imageurl"] {
-                        self.loadProfileImage(profileImageURL as! String, cell, tableView)
-                    }
+        }
+    
+
+    private func setNameAndProfileImage(_ cell: UserCell, indexPath: IndexPath) {
+
+        var partnerId: String?
+        
+        if messages[indexPath.row].toid == Auth.auth().currentUser?.uid {
+            partnerId = messages[indexPath.row].fromid!
+        }
+        else {
+            partnerId = messages[indexPath.row].toid!
+
+        }
+        
+    if let id = partnerId {
+        let ref = Database.database().reference().child("users").child(id)
+        ref.observe(.value, with: { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                cell.textLabel?.text = dictionary["name"] as? String
+                if let profileImageURL = dictionary["imageurl"] {
+                    self.loadProfileImage(profileImageURL as! String, cell, self.tableView)
                 }
-            }, withCancel: nil)
-        }
+            }
+        }, withCancel: nil)
 
-        cell.detailTextLabel?.text = messages[indexPath.row].text
-            return cell
-
-        }
-        return cell!
+}
     }
     
     private func loadProfileImage(_ url: String,_ cell: UserCell,_ tableviewObject: UITableView) {
