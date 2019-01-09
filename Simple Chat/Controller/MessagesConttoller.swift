@@ -173,6 +173,28 @@ class MessagesConttoller: UITableViewController {
         return messages.count
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let messages1 = messages[indexPath.row].chatPartnerId()
+        
+        guard let chatPartnerId = messages1 else {
+            return
+        }
+        
+        let ref = Database.database().reference().child("users").child(chatPartnerId)
+        ref.observe(.value, with: { (snapshot) in
+            
+            guard let dictionary = snapshot.value as? [String: AnyObject] else {
+                return
+            }
+            let chatUser = Users()
+            chatUser.id = snapshot.key
+            chatUser.setValuesForKeys(dictionary)
+            self.showChatLogcontroller(user: chatUser)
+            
+        }, withCancel: nil)
+
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 76.0
     }
@@ -194,18 +216,8 @@ class MessagesConttoller: UITableViewController {
     
 
     private func setNameAndProfileImage(_ cell: UserCell, indexPath: IndexPath) {
-
-        var partnerId: String?
         
-        if messages[indexPath.row].toid == Auth.auth().currentUser?.uid {
-            partnerId = messages[indexPath.row].fromid!
-        }
-        else {
-            partnerId = messages[indexPath.row].toid!
-
-        }
-        
-    if let id = partnerId {
+    if let id = messages[indexPath.row].chatPartnerId() {
         let ref = Database.database().reference().child("users").child(id)
         ref.observe(.value, with: { (snapshot) in
             
@@ -284,5 +296,12 @@ class MessagesConttoller: UITableViewController {
         let viewController = LoginViewController()
         viewController.viewController = self
         self.present(viewController, animated: true, completion: nil)
+    }
+    
+    func showChatLogcontroller(user: Users) {
+        
+        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        chatLogController.chatLogUser = user
+    navigationController?.pushViewController(chatLogController, animated: true)
     }
 }

@@ -9,11 +9,13 @@
 import UIKit
 import Firebase
 
-class ChatLogController: UICollectionViewController, UITextFieldDelegate {
+class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
     
+    let cellID = "cellID"
     var chatLogUser: Users?  {
         didSet {
             navigationItem.title = chatLogUser?.name
+            observeLoggedInUserMessages()
         }
     }
     var backButtonName: String?
@@ -27,11 +29,54 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
         return sendMessageTextField
     }()
     
+    var messages = [Message]()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboard()
-        collectionView.backgroundColor = .white
         setupSendMessageView()
+        collectionView.alwaysBounceVertical = true
+        collectionView.backgroundColor = .white
+        collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
+    }
+    
+    func observeLoggedInUserMessages() {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let loggedInUserMessages = Database.database().reference().child("user-messages").child(uid)
+        
+        loggedInUserMessages.observe(.childAdded, with: { (snapshot) in
+            
+
+            let messageId = snapshot.key
+            let userMessageRef = Database.database().reference().child("messages").child(messageId)
+            
+            self.loadMessages(userMessageRef)
+
+        }, withCancel: nil)
+    }
+    
+    func loadMessages(_ userMessageRef: DatabaseReference) {
+        
+        userMessageRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            guard let dictionary = snapshot.value as? [String: AnyObject] else {
+                return
+            }
+            
+            let messages = Message()
+            messages.setValuesForKeys(dictionary)
+            if messages.chatPartnerId() == self.chatLogUser?.id {
+                self.messages.append(messages)
+                
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
+            }
+            
+        }, withCancel: nil)
     }
     
     func setupSendMessageView() {
@@ -54,11 +99,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: sendMessageView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: sendMessageView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: sendMessageView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0).isActive = true
-            
-            sendMessageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        sendMessageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         }
-
-        
     }
     
     func setSendButtonAndTextFieldButton(_ sendMessageView: UIView) {
@@ -118,6 +160,22 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
                 
             }
         }
+    }
+    
+    // MARK: - Collection View Methods
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.messages.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: 80)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
+        cell.textView.text = messages[indexPath.item].text
+        return cell
     }
 }
 
