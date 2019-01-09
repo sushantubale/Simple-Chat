@@ -34,6 +34,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         super.viewDidLoad()
         self.hideKeyboard()
         setupSendMessageView()
+        collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 60, right: 0)
+//        collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
+
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = .white
         collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
@@ -164,17 +167,34 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     // MARK: - Collection View Methods
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        collectionView.collectionViewLayout.invalidateLayout()
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.messages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 80)
+        var height: CGFloat = 80
+        if let text = messages[indexPath.item].text {
+           height = estimatedHeightForText(text: text).height + 40
+        }
+        return CGSize(width: view.frame.width, height: height)
+
+    }
+    
+    private func estimatedHeightForText(text: String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin)
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [kCTFontAttributeName as NSAttributedString.Key: UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
-        cell.textView.text = messages[indexPath.item].text
+        let message = messages[indexPath.item]
+        cell.textView.text = message.text
+        cell.bubbleWidthAnchor?.constant = estimatedHeightForText(text: message.text!).width + 32
         return cell
     }
 }
