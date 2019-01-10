@@ -11,6 +11,7 @@ import Firebase
 
 class MessagesConttoller: UITableViewController {
     
+    var timer: Timer?
     var imageCache: NSCache<AnyObject,AnyObject>?
     var messagesDictionary = [String: Message]()
     static let cellID = "cell"
@@ -79,11 +80,15 @@ class MessagesConttoller: UITableViewController {
             self.messages.sorted(by: { (message1, message2) -> Bool in
                 return message2.timestamp!.intValue > message1.timestamp!.intValue
             })
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            self.timer?.invalidate()
+            self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(reloadTableView), userInfo: nil, repeats: false)
         }
-        
+    }
+    
+    @objc func reloadTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     func observeMessages() {

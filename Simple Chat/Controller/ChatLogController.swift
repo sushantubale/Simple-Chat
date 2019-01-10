@@ -30,16 +30,73 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }()
     
     var messages = [Message]()
+    var sendMessageViewBottomAnchor: NSLayoutConstraint?
+
+    // MARK: - View Life cycle methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hideKeyboard()
+        
+        collectionView.keyboardDismissMode = .interactive
+        let toolbar:UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0,  width: self.view.frame.size.width, height: 30))
+        //create left side empty space so that done button set on right side
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneBtn: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonAction))
+        toolbar.setItems([flexSpace, doneBtn], animated: false)
+        toolbar.sizeToFit()
+
+        self.sendMessageTextField.inputAccessoryView = toolbar
+        
         setupSendMessageView()
-        collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 60, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
 //        collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
 
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = .white
         collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
+        
+        setupKeyboardObservers()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+    }
+    @objc func doneButtonAction() {
+        self.view.endEditing(true)
+
+    }
+    
+    func setupKeyboardObservers() {
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        
+        let keyboardSize = (notification.userInfo![UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+        
+        let keyboardDuration = (notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue
+
+        sendMessageViewBottomAnchor?.constant = -keyboardSize!.height
+
+        UIView.animate(withDuration: keyboardDuration!) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+
+        let keyboardDuration = (notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue
+
+        UIView.animate(withDuration: keyboardDuration!) {
+            self.sendMessageViewBottomAnchor?.constant = 0
+            self.view.layoutIfNeeded()
+        }
+
     }
     
     func observeLoggedInUserMessages() {
@@ -95,17 +152,21 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             let guide = self.view.safeAreaLayoutGuide
             sendMessageView.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
             sendMessageView.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
-            sendMessageView.topAnchor.constraint(equalTo: guide.bottomAnchor, constant: -50).isActive = true
-            sendMessageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+           sendMessageViewBottomAnchor = sendMessageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            sendMessageViewBottomAnchor?.isActive = true
+            sendMessageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         }
         else {
-            NSLayoutConstraint(item: sendMessageView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: sendMessageView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: sendMessageView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0).isActive = true
         sendMessageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            
+            sendMessageViewBottomAnchor = sendMessageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            sendMessageViewBottomAnchor?.isActive = true
+
         }
     }
-    
+   
     func setSendButtonAndTextFieldButton(_ sendMessageView: UIView) {
         let sendButton = UIButton()
         sendButton.setTitle("Send", for: .normal)
@@ -160,7 +221,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 
                 let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!).child(messageId)
                 recipientUserMessagesRef.setValue(1)
-                
+                self.sendMessageTextField.text = nil
             }
         }
     }
@@ -176,11 +237,13 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
         var height: CGFloat = 80
         if let text = messages[indexPath.item].text {
            height = estimatedHeightForText(text: text).height + 40
         }
-        return CGSize(width: view.frame.width, height: height)
+        let mainScreenWidth = UIScreen.main.bounds.width
+        return CGSize(width: mainScreenWidth, height: height)
 
     }
     
@@ -193,10 +256,37 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
         let message = messages[indexPath.item]
+        setupCell(message: message, cell: cell)
+        
         cell.textView.text = message.text
         cell.bubbleWidthAnchor?.constant = estimatedHeightForText(text: message.text!).width + 32
         return cell
     }
+    
+    func setupCell(message: Message, cell: ChatMessageCell) {
+        
+        if let profileImage = self.chatLogUser?.imageurl {
+            cell.loadProfileImage(profileImage)
+        }
+        if message.fromid == Auth.auth().currentUser?.uid {
+            cell.bubbleView.backgroundColor = ChatMessageCell.blueColor
+            cell.textView.textColor = .white
+            cell.bubbleViewRightAnchor?.isActive = true
+            cell.bubbleViewLeftAnchor?.isActive = false
+            cell.profileImageView.isHidden = true
+
+        }
+        else {
+            cell.bubbleView.backgroundColor = UIColor(r: 240, g: 240, b: 240)
+            cell.textView.textColor = .black
+            DispatchQueue.main.async {
+                cell.bubbleViewRightAnchor?.isActive = false
+                cell.bubbleViewLeftAnchor?.isActive = true
+                cell.profileImageView.isHidden = false
+            }
+        }
+    }
+
 }
 
 extension ChatLogController
