@@ -101,11 +101,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     func observeLoggedInUserMessages() {
         
-        guard let uid = Auth.auth().currentUser?.uid else {
+        guard let uid = Auth.auth().currentUser?.uid, let toId = chatLogUser?.id else {
             return
         }
         
-        let loggedInUserMessages = Database.database().reference().child("user-messages").child(uid)
+        let loggedInUserMessages = Database.database().reference().child("user-messages").child(uid).child(toId)
         
         loggedInUserMessages.observe(.childAdded, with: { (snapshot) in
             
@@ -128,13 +128,12 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             
             let messages = Message()
             messages.setValuesForKeys(dictionary)
-            if messages.chatPartnerId() == self.chatLogUser?.id {
                 self.messages.append(messages)
                 
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
                 }
-            }
+            
             
         }, withCancel: nil)
     }
@@ -216,11 +215,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 }
                 guard let messageId = childRef.key else { return }
                 
-                let userMessagesRef = Database.database().reference().child("user-messages").child(fromId!).child(messageId)
-                userMessagesRef.setValue(1)
+                let userMessagesRef = Database.database().reference().child("user-messages").child(fromId!).child(toID!)
+                userMessagesRef.updateChildValues([messageId: 1])
                 
-                let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!).child(messageId)
-                recipientUserMessagesRef.setValue(1)
+                let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!).child(fromId!)
+                recipientUserMessagesRef.updateChildValues([messageId: 1])
                 self.sendMessageTextField.text = nil
             }
         }

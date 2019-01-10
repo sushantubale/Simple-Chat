@@ -56,12 +56,20 @@ class MessagesConttoller: UITableViewController {
         let userMessageRef = Database.database().reference().child("user-messages").child(uid)
         userMessageRef.observe(.childAdded, with: { (snapshot) in
             
-            let messageId = snapshot.key
-            let messageReferences = Database.database().reference().child("messages").child(messageId)
-            messageReferences.observe(.value, with: {[weak self] (snapshot) in
+            let userId = snapshot.key
+            
+            let singleMssageRef = Database.database().reference().child("user-messages").child(uid).child(userId)
+            singleMssageRef.observe(.childAdded, with: { (snapshot) in
+                let messageId = snapshot.key
+                //print(messageId)
+                let messageReferences = Database.database().reference().child("messages").child(messageId)
+                messageReferences.observe(.value, with: {[weak self] (snapshot) in
+                    
+                    self?.addDataToTableView(snapshot: snapshot)
+                    }, withCancel: nil)
                 
-                self?.addDataToTableView(snapshot: snapshot)
             }, withCancel: nil)
+            return
         }, withCancel: nil)
     }
     
@@ -74,14 +82,7 @@ class MessagesConttoller: UITableViewController {
             if let chatPartnerId = message.chatPartnerId() {
                 self.messagesDictionary[chatPartnerId] = message
             }
-                self.messages = Array(self.messagesDictionary.values)
-            
-            
-            self.messages.sorted(by: { (message1, message2) -> Bool in
-                return message2.timestamp!.intValue > message1.timestamp!.intValue
-            })
-            self.timer?.invalidate()
-            self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(reloadTableView), userInfo: nil, repeats: false)
+            self.handleReloadTableview()
         }
     }
     
@@ -89,6 +90,17 @@ class MessagesConttoller: UITableViewController {
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
+    }
+    
+    private func handleReloadTableview() {
+        
+        self.messages = Array(self.messagesDictionary.values)
+                self.messages.sorted(by: { (message1, message2) -> Bool in
+            return message2.timestamp!.intValue > message1.timestamp!.intValue
+        })
+        self.timer?.invalidate()
+        self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(reloadTableView), userInfo: nil, repeats: false)
+
     }
     
     func observeMessages() {
