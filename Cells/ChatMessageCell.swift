@@ -20,6 +20,7 @@ class ChatMessageCell: UICollectionViewCell {
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.backgroundColor = .clear
         tv.textColor = .white
+        tv.isEditable = false
         return tv
     }()
     
@@ -37,8 +38,15 @@ class ChatMessageCell: UICollectionViewCell {
        profileImageView.layer.cornerRadius = 16
          profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.masksToBounds = true
-        profileImageView.image = UIImage(named: "multiple_train.png")
         return profileImageView
+    }()
+    
+    let messageImageView: UIImageView = {
+        let messageImageView = UIImageView()
+        messageImageView.layer.cornerRadius = 16
+        messageImageView.translatesAutoresizingMaskIntoConstraints = false
+        messageImageView.layer.masksToBounds = true
+        return messageImageView
     }()
     
     var bubbleWidthAnchor: NSLayoutConstraint?
@@ -51,6 +59,12 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(profileImageView)
         addSubview(bubbleView)
         addSubview(textView)
+        addSubview(messageImageView)
+        
+        messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
+        messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
+        messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
+        messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
         
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
@@ -77,6 +91,38 @@ class ChatMessageCell: UICollectionViewCell {
 
     }
     
+    func loadMessageImage(_ url: String) {
+        
+        self.imageCache = nil
+        if let imageCache = imageCache {
+            if let imageCached = imageCache.object(forKey: url as AnyObject) as? UIImage  {
+                self.profileImageView.image = imageCached
+                return
+            }
+        }
+        
+        if let url = URL(string: url) {
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                if error != nil  {
+                    print("Error getting the profile image")
+                    return
+                }
+                
+                if let data = data {
+                    DispatchQueue.main.async {
+                        
+                        if let downloadedImage = UIImage(data: data) {
+                            self.imageCache?.setValue(downloadedImage, forKey: url.absoluteString)
+                            DispatchQueue.main.async {
+                                self.messageImageView.image = UIImage(data: data)
+
+                            }
+                        }
+                    }
+                }
+                }.resume()
+        }
+    }
     
      func loadProfileImage(_ url: String) {
         
@@ -87,7 +133,6 @@ class ChatMessageCell: UICollectionViewCell {
                 return
             }
         }
-        
         
         if let url = URL(string: url) {
             URLSession.shared.dataTask(with: url) { (data, response, error) in
