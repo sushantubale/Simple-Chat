@@ -11,6 +11,8 @@ import Firebase
 
 class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    let sendMessageView = UIView()
+
     let cellID = "cellID"
     var chatLogUser: Users?  {
         didSet {
@@ -139,7 +141,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     func setupSendMessageView() {
         
-        let sendMessageView = UIView()
         sendMessageView.backgroundColor = .white
         sendMessageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(sendMessageView)
@@ -335,6 +336,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
         let message = messages[indexPath.item]
+        cell.chatLogController = self
         setupCell(message: message, cell: cell)
         
         cell.textView.text = message.text
@@ -356,10 +358,12 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             cell.loadMessageImage(messageImageUrl)
             cell.messageImageView.isHidden = false
             cell.bubbleView.backgroundColor = .clear
+            cell.textView.isHidden = true
 
         }
         else {
             cell.messageImageView.isHidden = true
+            cell.textView.isHidden = false
         }
         
         if message.fromid == Auth.auth().currentUser?.uid {
@@ -368,7 +372,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             cell.bubbleViewRightAnchor?.isActive = true
             cell.bubbleViewLeftAnchor?.isActive = false
             cell.profileImageView.isHidden = true
-
         }
         else {
             cell.bubbleView.backgroundColor = UIColor(r: 240, g: 240, b: 240)
@@ -380,7 +383,54 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             }
         }
     }
+    
+    var startingFrame: CGRect?
+    var blackBackgroundView: UIView?
+    func performZoomInImageView(_ startingImageView: UIImageView) {
+        
+        startingFrame = startingImageView.superview?.convert(startingImageView.frame, to: nil)
+        
+        let zoomingImageView = UIImageView(frame: startingFrame!)
+        zoomingImageView.image = startingImageView.image
+        zoomingImageView.isUserInteractionEnabled = true
+        zoomingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleZoomOut)))
+        let keyWindow = UIApplication.shared.keyWindow
+        self.blackBackgroundView = UIView(frame: (keyWindow?.frame)!)
+        self.blackBackgroundView!.backgroundColor = .black
+        self.blackBackgroundView!.alpha = 0
+        keyWindow?.addSubview(self.blackBackgroundView!)
+        
+        keyWindow?.addSubview(zoomingImageView)
 
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+            
+            self.blackBackgroundView!.alpha = 1
+            self.sendMessageView.alpha = 0
+
+            let height = CGFloat((self.startingFrame?.height)!) / CGFloat((self.startingFrame?.width)!) * CGFloat((keyWindow?.frame.width)!)
+
+            zoomingImageView.frame = CGRect(x: 0, y: 0, width: (keyWindow?.frame.width)!, height: height)
+
+            zoomingImageView.center = (keyWindow?.center)!
+
+        }, completion: nil)
+    }
+
+    @objc func handleZoomOut(tapGesture: UITapGestureRecognizer) {
+        
+        if let zoomingOutView = tapGesture.view {
+            zoomingOutView.layer.cornerRadius = 16
+            zoomingOutView.layer.masksToBounds = true
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+                zoomingOutView.frame = self.startingFrame!
+                self.blackBackgroundView?.alpha = 0
+                self.sendMessageView.alpha = 1
+            }) { (completed) in
+                
+                zoomingOutView.removeFromSuperview()
+            }
+        }
+    }
 }
 
 extension ChatLogController
