@@ -18,6 +18,9 @@ class Message: NSObject {
     @objc var imageUrl: String?
      @objc var imagewidth: NSNumber?
      @objc var imageheight: NSNumber?
+    @objc var videoUrl: String?
+
+    
 
     func chatPartnerId() -> String? {
         return fromid == Auth.auth().currentUser?.uid ? toid : fromid
