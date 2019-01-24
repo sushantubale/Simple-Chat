@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import AVFoundation
+import MobileCoreServices
 
 class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -212,6 +214,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
+        imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String, kUTTypeGIF as String]
         imagePicker.sourceType = .photoLibrary
         imagePicker.allowsEditing = true
         present(imagePicker, animated: true, completion: nil)
@@ -219,23 +222,117 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        var selectedImageForPicker: UIImage? = UIImage()
-        
-        if let editedImage = info[.editedImage] as? UIImage {
-            selectedImageForPicker = editedImage
+        if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL{
+            print(videoUrl)
+            let fileName = NSUUID().uuidString + ".mov"
             
-        } else if let orignalImage = info[.originalImage] as? UIImage {
-        selectedImageForPicker = orignalImage
-    }
-        
-        if let selectedImage = selectedImageForPicker {
-            uploadImageToStorage(image: selectedImage)
+            uploadVideoToStorage(fileName, videoUrl)
+            
+        } else {
+            var selectedImageForPicker: UIImage? = UIImage()
+            
+            if let editedImage = info[.editedImage] as? UIImage {
+                selectedImageForPicker = editedImage
+                
+            } else if let orignalImage = info[.originalImage] as? UIImage {
+                selectedImageForPicker = orignalImage
+            }
+            
+            if let selectedImage = selectedImageForPicker {
+                uploadImageToStorage(image: selectedImage)
+            }
+            dismiss(animated: true, completion: nil)
+
         }
-        dismiss(animated: true, completion: nil)
-    
     }
     
-    private func uploadImageToStorage(image: UIImage) {
+    func getVideoUrl(storageRef: StorageReference, completion: @escaping (String) -> ()) {
+        storageRef.downloadURL(completion: { [weak self] (url, err) in
+            if err != nil {
+                print("failed to download url")
+            }
+            completion((url?.absoluteString)!)
+        })
+        
+    }
+    
+    func thumbnailImage(videoUrl: String) -> UIImage? {
+        let assest = AVAsset(url: URL(string: videoUrl)!)
+        let imageGenerator = AVAssetImageGenerator(asset: assest)
+        
+        do
+        {
+             let thumbnailcgImage = try imageGenerator.copyCGImage(at: CMTimeMake(value: 1, timescale: 60), actualTime: nil)
+            return UIImage(cgImage: thumbnailcgImage)
+
+        }catch {
+            print(error)
+        }
+        return nil
+    }
+    
+    func uploadVideoToStorage(_ fileName: String,_ videoURL: URL) {
+        let storageRef = Storage.storage().reference().child(fileName)
+
+        // Upload file and metadata to the object 'images/mountains.jpg'
+        let uploadTask = storageRef.putFile(from: videoURL as URL, metadata: nil) { (metadata, error) in
+            if error != nil {
+                print(error as Any)
+                return
+            }
+            
+        }
+        
+        dismiss(animated: true, completion: nil)
+        
+        uploadTask.observe(.pause) { snapshot in
+            // Upload paused
+        }
+        
+        uploadTask.observe(.progress) { snapshot in
+            // Upload reported progress
+            let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount)
+                / Double(snapshot.progress!.totalUnitCount)
+            
+        }
+        
+        uploadTask.observe(.success) { snapshot in
+            self.getVideoUrl(storageRef: storageRef, completion: { (videoUrlValue) in
+               if let thumbnailImage = self.thumbnailImage(videoUrl: videoUrlValue)
+               {
+                self.uploadImageToStorage(image: thumbnailImage, isVideo: true)
+                }
+            })
+        }
+        
+        uploadTask.observe(.failure) { snapshot in
+            if let error = snapshot.error as? NSError {
+                switch (StorageErrorCode(rawValue: error.code)!) {
+                case .objectNotFound:
+                    // File doesn't exist
+                    break
+                case .unauthorized:
+                    // User doesn't have permission to access file
+                    break
+                case .cancelled:
+                    // User canceled the upload
+                    break
+                    
+                    /* ... */
+                    
+                case .unknown:
+                    // Unknown error occurred, inspect the server response
+                    break
+                default:
+                    // A separate error occurred. This is a good place to retry the upload.
+                    break
+                }
+            }
+        }
+        // [END firstorage_upload_combined]
+    }
+
+    private func uploadImageToStorage(image: UIImage, isVideo: Bool = false) {
         
         let imageName = NSUUID().uuidString
         let storageRef = Storage.storage().reference().child("messages_images").child(imageName)
@@ -254,8 +351,13 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 }
                 
                 let profileImageURL = url?.absoluteString
+                if isVideo {
+                    self?.sendMessage(nil, image.size.width, image.size.height, profileImageURL)
+                }
+                else {
+                    self?.sendMessage(profileImageURL, image.size.width, image.size.height, nil)
 
-                self?.sendMessage(profileImageURL, image.size.width, image.size.height)
+                }
             })
         }
     }
@@ -269,7 +371,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         sendMessage()
     }
     
-    func sendMessage(_ imageUrl: String? = nil,_ imageWidth: CGFloat = 0,_ imageHeight: CGFloat = 0) {
+    func sendMessage(_ imageUrl: String? = nil,_ imageWidth: CGFloat = 0,_ imageHeight: CGFloat = 0,_ videoUrl: String? = nil) {
         
         let reference = Database.database().reference().child("messages")
         let childRef = reference.childByAutoId()
@@ -283,7 +385,12 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "imageUrl": imageUrl!, "imagewidth": imageWidth, "imageheight": imageHeight]
             }
             else {
+                if videoUrl != nil {
+                    values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "videoUrl": videoUrl!, "imagewidth": imageWidth, "imageheight": imageHeight]
+                }
+                else {
              values = ["fromid": fromId as Any, "toid": toID as Any,"text": messageText, "timestamp": timestamp]
+                }
             }
             
             childRef.updateChildValues(values) { (error, ref) in
@@ -344,6 +451,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             cell.bubbleWidthAnchor?.constant = estimatedHeightForText(text: messageText).width + 32
         } else if message.imageUrl != nil {
            cell.bubbleWidthAnchor?.constant = 200
+        } else if message.videoUrl != nil {
+            cell.bubbleWidthAnchor?.constant = 200
         }
         return cell
     }
@@ -364,6 +473,14 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         else {
             cell.messageImageView.isHidden = true
             cell.textView.isHidden = false
+        }
+        
+        if let videoUrl = message.videoUrl {
+            cell.loadMessageImage(videoUrl)
+            cell.messageImageView.isHidden = false
+            cell.bubbleView.backgroundColor = .clear
+            cell.textView.isHidden = true
+
         }
         
         if message.fromid == Auth.auth().currentUser?.uid {
