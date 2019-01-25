@@ -198,7 +198,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         sendMessageTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 16).isActive = true
 
        uploadImageView.isUserInteractionEnabled = true
-        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSendImage)))
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
 
         let seperatorView = UIView()
         seperatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -210,7 +210,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         seperatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
     }
 
-    @objc func handleSendImage() {
+    @objc func handleUploadTap() {
         
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
@@ -222,44 +222,71 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL{
-            print(videoUrl)
-            let fileName = NSUUID().uuidString + ".mov"
+        if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
             
-            uploadVideoToStorage(fileName, videoUrl)
+            handleVideoSelectedForUrl(videoUrl)
             
         } else {
-            var selectedImageForPicker: UIImage? = UIImage()
             
-            if let editedImage = info[.editedImage] as? UIImage {
-                selectedImageForPicker = editedImage
-                
-            } else if let orignalImage = info[.originalImage] as? UIImage {
-                selectedImageForPicker = orignalImage
-            }
+            handleImageSelectedForInfo(info)
+    }
+        
+    }
+    
+    func handleImageSelectedForInfo(_ info: [UIImagePickerController.InfoKey : Any]) {
+        
+        var selectedImageForPicker: UIImage? = UIImage()
+        
+        if let editedImage = info[.editedImage] as? UIImage {
+            selectedImageForPicker = editedImage
             
-            if let selectedImage = selectedImageForPicker {
-                uploadImageToStorage(image: selectedImage)
-            }
-            dismiss(animated: true, completion: nil)
+        } else if let orignalImage = info[.originalImage] as? UIImage {
+            selectedImageForPicker = orignalImage
+        }
+        
+        if let selectedImage = selectedImageForPicker {
+            uploadToFirebaseStorageUsingImage(image: selectedImage)
+        }
+        dismiss(animated: true, completion: nil)
+        
+    }
+    
+    func handleVideoSelectedForUrl(_ videoUrl: URL) {
+        
+        let fileName = NSUUID().uuidString + ".mov"
 
+        let uploadTask = Storage.storage().reference().child(fileName).putFile(from: videoUrl, metadata: nil) { (metadata, error) in
+            
+            if error != nil {
+                print(error as Any)
+                return
+            }
+            
+            Storage.storage().reference().child(fileName).downloadURL(completion: { (videoUrl, error) in
+                
+                let thumbnailImage = self.thumbnailImageForVideoUrl(videoUrl: (videoUrl?.absoluteString)!)
+                self.uploadToFirebaseStorageUsingImage(image: thumbnailImage!, isVideo: true)
+            })
+            
+        }
+        
+        dismiss(animated: true, completion: nil)
+        
+        uploadTask.observe(.progress) { (snapshot) in
+            
+            if let completedUnit = snapshot.progress?.completedUnitCount {
+                print(completedUnit)
+            }
+        }
+        
+        uploadTask.observe(.success) { (snapshot) in
+            print("successfully uploaded image")
         }
     }
     
-    func getVideoUrl(storageRef: StorageReference, completion: @escaping (String) -> ()) {
-        storageRef.downloadURL(completion: { [weak self] (url, err) in
-            if err != nil {
-                print("failed to download url")
-            }
-            completion((url?.absoluteString)!)
-        })
-        
-    }
-    
-    func thumbnailImage(videoUrl: String) -> UIImage? {
+   private func thumbnailImageForVideoUrl(videoUrl: String) -> UIImage? {
         let assest = AVAsset(url: URL(string: videoUrl)!)
         let imageGenerator = AVAssetImageGenerator(asset: assest)
-        
         do
         {
              let thumbnailcgImage = try imageGenerator.copyCGImage(at: CMTimeMake(value: 1, timescale: 60), actualTime: nil)
@@ -270,82 +297,21 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
         return nil
     }
-    
-    func uploadVideoToStorage(_ fileName: String,_ videoURL: URL) {
-        let storageRef = Storage.storage().reference().child(fileName)
 
-        // Upload file and metadata to the object 'images/mountains.jpg'
-        let uploadTask = storageRef.putFile(from: videoURL as URL, metadata: nil) { (metadata, error) in
-            if error != nil {
-                print(error as Any)
-                return
-            }
-            
-        }
-        
-        dismiss(animated: true, completion: nil)
-        
-        uploadTask.observe(.pause) { snapshot in
-            // Upload paused
-        }
-        
-        uploadTask.observe(.progress) { snapshot in
-            // Upload reported progress
-            let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount)
-                / Double(snapshot.progress!.totalUnitCount)
-            
-        }
-        
-        uploadTask.observe(.success) { snapshot in
-            self.getVideoUrl(storageRef: storageRef, completion: { (videoUrlValue) in
-               if let thumbnailImage = self.thumbnailImage(videoUrl: videoUrlValue)
-               {
-                self.uploadImageToStorage(image: thumbnailImage, isVideo: true)
-                }
-            })
-        }
-        
-        uploadTask.observe(.failure) { snapshot in
-            if let error = snapshot.error as? NSError {
-                switch (StorageErrorCode(rawValue: error.code)!) {
-                case .objectNotFound:
-                    // File doesn't exist
-                    break
-                case .unauthorized:
-                    // User doesn't have permission to access file
-                    break
-                case .cancelled:
-                    // User canceled the upload
-                    break
-                    
-                    /* ... */
-                    
-                case .unknown:
-                    // Unknown error occurred, inspect the server response
-                    break
-                default:
-                    // A separate error occurred. This is a good place to retry the upload.
-                    break
-                }
-            }
-        }
-        // [END firstorage_upload_combined]
-    }
-
-    private func uploadImageToStorage(image: UIImage, isVideo: Bool = false) {
+    private func uploadToFirebaseStorageUsingImage(image: UIImage, isVideo: Bool = false) {
         
         let imageName = NSUUID().uuidString
-        let storageRef = Storage.storage().reference().child("messages_images").child(imageName)
-        let messageImage = image.jpegData(compressionQuality: 0.1)
+        let ref = Storage.storage().reference().child("messages_images").child(imageName)
+        let messageImage = image.jpegData(compressionQuality: 0.2)
         
-        storageRef.putData(messageImage!, metadata: nil) { (metadata, error) in
+        ref.putData(messageImage!, metadata: nil) { (metadata, error) in
             if error != nil {
                 
-                print("error while downoading image", error)
+                print("error while downoading image", error as Any)
                 return
             }
             
-            storageRef.downloadURL(completion: { [weak self] (url, err) in
+            ref.downloadURL(completion: { [weak self] (url, err) in
                 if err != nil {
                     print("failed to download url")
                 }
@@ -423,7 +389,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         var height: CGFloat = 80
         
-        var messages = self.messages[indexPath.item]
+        let messages = self.messages[indexPath.item]
         if let text = messages.text {
             height = estimatedHeightForText(text: text).height + 40
         } else if let imageWidth = messages.imagewidth?.floatValue, let imageHeight = messages.imageheight?.floatValue {
