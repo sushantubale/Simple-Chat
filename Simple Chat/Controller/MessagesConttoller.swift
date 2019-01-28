@@ -96,8 +96,13 @@ class MessagesConttoller: UITableViewController {
         
         self.messages = Array(self.messagesDictionary.values)
                 self.messages.sorted(by: { (message1, message2) -> Bool in
-            return message2.timestamp!.intValue > message1.timestamp!.intValue
+                    if let message1Timestamp = message1.timestamp?.intValue, let message2Timestamp = message2.timestamp?.intValue {
+                        print("message1Timestamp or message2Timestamp is empty")
+                        return message1Timestamp > message2Timestamp
+                    }
+                    return false
         })
+        
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(reloadTableView), userInfo: nil, repeats: false)
 
@@ -172,16 +177,19 @@ class MessagesConttoller: UITableViewController {
                 self?.navigationItem.titleView = titleview
                 titleview.backgroundColor = .white
                 titleview.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-                titleview.addSubview((self?.navBarImageView)!)
-                titleview.addSubview((self?.navBarTitle)!)
-                self?.navBarTitle.text = name
-                self?.navBarImageView.leftAnchor.constraint(equalTo: titleview.leftAnchor).isActive = true
-                self?.navBarImageView.centerYAnchor.constraint(equalTo: titleview.centerYAnchor).isActive = true
-                self?.navBarImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
-                self?.navBarImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
                 
-                self?.navBarTitle.leftAnchor.constraint(equalTo: (self?.navBarImageView.leftAnchor)!, constant: 50).isActive = true
-                self?.navBarTitle.topAnchor.constraint(equalTo: titleview.topAnchor, constant: 10).isActive = true
+                if let navBarImageView = self?.navBarImageView, let navBarTitle = self?.navBarTitle  {
+                    titleview.addSubview(navBarImageView)
+                    titleview.addSubview(navBarTitle)
+                    self?.navBarTitle.text = name
+                    self?.navBarImageView.leftAnchor.constraint(equalTo: titleview.leftAnchor).isActive = true
+                    self?.navBarImageView.centerYAnchor.constraint(equalTo: titleview.centerYAnchor).isActive = true
+                    self?.navBarImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
+                    self?.navBarImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+                    
+                    self?.navBarTitle.leftAnchor.constraint(equalTo: navBarImageView.leftAnchor, constant: 50).isActive = true
+                    self?.navBarTitle.topAnchor.constraint(equalTo: titleview.topAnchor, constant: 10).isActive = true
+                }
             }
         }
     }
@@ -221,15 +229,17 @@ class MessagesConttoller: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MessagesConttoller.cellID, for: indexPath) as? UserCell
         if let cell = cell {
             setNameAndProfileImage(cell, indexPath: indexPath)
+            if let messageTimestampDoubleVal = messages[indexPath.row].timestamp?.doubleValue {
+                let timeStampDate = NSDate(timeIntervalSince1970: messageTimestampDoubleVal)
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "hh:mm:ss"
+                cell.timeLabel.text = dateFormatter.string(from: timeStampDate as Date)
+                cell.detailTextLabel?.text = messages[indexPath.row].text
+                return cell
+            }
         }
-            let timeStampDate = NSDate(timeIntervalSince1970: (messages[indexPath.row].timestamp?.doubleValue)!)
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "hh:mm:ss"
-            cell?.timeLabel.text = dateFormatter.string(from: timeStampDate as Date)
-            cell?.detailTextLabel?.text = messages[indexPath.row].text
-            return cell!
-
-        }
+        return cell!
+    }
     
 
     private func setNameAndProfileImage(_ cell: UserCell, indexPath: IndexPath) {
