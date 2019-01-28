@@ -168,9 +168,13 @@ class LoginViewController: UIViewController {
     
     func handleRegister() {
         
-        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { [weak self](user, error) in
+        guard let emailTextField = emailTextField.text, let passwordTextField = passwordTextField.text, let name = nameTextField.text else {
             
-            guard let name = self?.nameTextField.text, let email = self?.emailTextField.text else {return}
+            return
+        }
+
+        Auth.auth().createUser(withEmail: emailTextField, password: passwordTextField) { [weak self](user, error) in
+            
             
             if error != nil {
                 print("error is \(String(describing: error))")
@@ -198,7 +202,7 @@ class LoginViewController: UIViewController {
                         
                         let profileImageURL = url?.absoluteString
                         let values = ["name": name,
-                                      "email": email,
+                                      "email": emailTextField,
                                       "imageurl": profileImageURL]
                         guard let uid = user?.user.uid else {return}
                         
