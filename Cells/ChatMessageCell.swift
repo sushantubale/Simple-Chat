@@ -110,18 +110,25 @@ class ChatMessageCell: UICollectionViewCell {
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
 
     }
+    var playerLayer: AVPlayerLayer?
+    var player: AVPlayer?
     
     @objc func handlePlayVideo() {
     
         if let videoUrlString = message?.videoUrl, let url = URL(string: videoUrlString) {
-            let player = AVPlayer(url: url)
-            let playerLayer = AVPlayerLayer(player: player)
-            playerLayer.frame = bubbleView.bounds
-            bubbleView.layer.addSublayer(playerLayer)
-            player.play()
+             player = AVPlayer(url: url)
+             playerLayer = AVPlayerLayer(player: player)
+            playerLayer!.frame = bubbleView.bounds
+            bubbleView.layer.addSublayer(playerLayer!)
+            player!.play()
             
         }
-        
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
     }
     
     @objc func handleZoomTap(tapGesture: UITapGestureRecognizer) {
