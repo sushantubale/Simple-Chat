@@ -66,7 +66,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
     @objc func doneButtonAction() {
         self.view.endEditing(true)
-
     }
     
     func setupKeyboardObservers() {
@@ -338,7 +337,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 }
                 else {
                     self?.sendMessage(profileImageURL, image.size.width, image.size.height, nil)
-
                 }
             })
         }
@@ -425,15 +423,20 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
         let message = messages[indexPath.item]
+        cell.message = message
         cell.chatLogController = self
         setupCell(message: message, cell: cell)
         
         cell.textView.text = message.text
         if let messageText = message.text {
             cell.bubbleWidthAnchor?.constant = estimatedHeightForText(text: messageText).width + 32
+            cell.playButton.isHidden = true
         } else if message.imageUrl != nil &&  message.isVideo! == "false" {
+            cell.playButton.isHidden = true
+
            cell.bubbleWidthAnchor?.constant = 200
         } else if message.isVideo! == "true" {
+            cell.playButton.isHidden = false
             cell.bubbleWidthAnchor?.constant = 200
         }
         return cell

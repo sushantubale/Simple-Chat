@@ -39,7 +39,7 @@ class ChatMessageCell: UICollectionViewCell {
        let playbutton = UIButton(type: .system)
         playbutton.translatesAutoresizingMaskIntoConstraints = false
         playbutton.addTarget(self, action: #selector(handlePlayVideo), for: .touchUpInside)
-        playbutton.setImage(UIImage(named: "playButton.png"), for: .normal)
+        playbutton.setImage(UIImage(named: "play3.png"), for: .normal)
         playbutton.tintColor = .white
         return playbutton
     }()
@@ -75,7 +75,6 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(profileImageView)
         
         bubbleView.addSubview(messageImageView)
-        
         messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
         messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
         messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
@@ -116,7 +115,6 @@ class ChatMessageCell: UICollectionViewCell {
     
         if let videoUrlString = message?.videoUrl, let url = URL(string: videoUrlString) {
             let player = AVPlayer(url: url)
-            
             let playerLayer = AVPlayerLayer(player: player)
             playerLayer.frame = bubbleView.bounds
             bubbleView.layer.addSublayer(playerLayer)
