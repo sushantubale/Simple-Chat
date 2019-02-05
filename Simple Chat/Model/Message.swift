@@ -16,11 +16,10 @@ class Message: NSObject {
     @objc var timestamp: NSNumber?
     @objc var text: String?
     @objc var imageUrl: String?
-     @objc var imagewidth: NSNumber?
-     @objc var imageheight: NSNumber?
+    @objc var imagewidth: NSNumber?
+    @objc var imageheight: NSNumber?
     @objc var videoUrl: String?
-
-    
+    @objc var isVideo: String?
 
     func chatPartnerId() -> String? {
         return fromid == Auth.auth().currentUser?.uid ? toid : fromid

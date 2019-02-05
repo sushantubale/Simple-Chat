@@ -66,7 +66,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
     @objc func doneButtonAction() {
         self.view.endEditing(true)
-
     }
     
     func setupKeyboardObservers() {
@@ -223,14 +222,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
-            
             handleVideoSelectedForUrl(videoUrl)
-            
-        } else {
-            
+            } else {
             handleImageSelectedForInfo(info)
     }
-        
     }
     
     func handleImageSelectedForInfo(_ info: [UIImagePickerController.InfoKey : Any]) {
@@ -255,19 +250,25 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         let fileName = NSUUID().uuidString + ".mov"
 
-        let uploadTask = Storage.storage().reference().child(fileName).putFile(from: videoUrl, metadata: nil) { (metadata, error) in
+        let uploadTask = Storage.storage().reference().child(fileName).putFile(from: videoUrl, metadata: nil) { (responseMetadata, error) in
             
             if error != nil {
                 print(error as Any)
                 return
             }
             
-            Storage.storage().reference().child(fileName).downloadURL(completion: { (videoUrl, error) in
-                
-                let thumbnailImage = self.thumbnailImageForVideoUrl(videoUrl: (videoUrl?.absoluteString)!)
-                self.uploadToFirebaseStorageUsingImage(image: thumbnailImage!, isVideo: true)
-            })
+            guard let metadata = responseMetadata, let path = metadata.path else {
+                return
+            }
             
+            self.getDownloadURL(from: path, completion: { (url1, error1) in
+                if error1 != nil {
+                    return
+                }
+                
+                let thumbnailImage = self.thumbnailImageForVideoUrl(videoUrl: (url1!.absoluteString))
+                self.uploadToFirebaseStorageUsingImage(image: thumbnailImage!, isVideo: "true", videoUrl: url1?.absoluteString)
+            })
         }
         
         dismiss(animated: true, completion: nil)
@@ -284,6 +285,20 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
     }
     
+    private func getDownloadURL(from path: String, completion: @escaping (URL?, Error?) -> Void) {
+        
+        Storage.storage().reference().child(path).downloadURL { (url, err) in
+            if err != nil {
+                completion(nil, err)
+
+            }
+            else {
+                completion(url, nil)
+
+            }
+        }
+    }
+
    private func thumbnailImageForVideoUrl(videoUrl: String) -> UIImage? {
         let assest = AVAsset(url: URL(string: videoUrl)!)
         let imageGenerator = AVAssetImageGenerator(asset: assest)
@@ -298,7 +313,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         return nil
     }
 
-    private func uploadToFirebaseStorageUsingImage(image: UIImage, isVideo: Bool = false) {
+    private func uploadToFirebaseStorageUsingImage(image: UIImage, isVideo: String? = "false", videoUrl: String? = nil) {
         
         let imageName = NSUUID().uuidString
         let ref = Storage.storage().reference().child("messages_images").child(imageName)
@@ -317,12 +332,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 }
                 
                 let profileImageURL = url?.absoluteString
-                if isVideo {
-                    self?.sendMessage(nil, image.size.width, image.size.height, profileImageURL)
+                if isVideo == "true" {
+                    self?.sendMessage(profileImageURL, image.size.width, image.size.height, videoUrl, isVideo: "true")
                 }
                 else {
                     self?.sendMessage(profileImageURL, image.size.width, image.size.height, nil)
-
                 }
             })
         }
@@ -337,7 +351,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         sendMessage()
     }
     
-    func sendMessage(_ imageUrl: String? = nil,_ imageWidth: CGFloat = 0,_ imageHeight: CGFloat = 0,_ videoUrl: String? = nil) {
+    func sendMessage(_ imageUrl: String? = nil,_ imageWidth: CGFloat = 0,_ imageHeight: CGFloat = 0,_ videoUrl: String? = nil, isVideo: String? = "false") {
         
         let reference = Database.database().reference().child("messages")
         let childRef = reference.childByAutoId()
@@ -347,15 +361,15 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         var values = [String: Any]()
         
         if let messageText = sendMessageTextField.text {
-            if imageUrl != nil {
-                values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "imageUrl": imageUrl!, "imagewidth": imageWidth, "imageheight": imageHeight]
+            if imageUrl != nil && isVideo == "false" {
+                values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "imageUrl": imageUrl!, "imagewidth": imageWidth, "imageheight": imageHeight, "isVideo": "false"]
             }
             else {
-                if videoUrl != nil {
-                    values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "videoUrl": videoUrl!, "imagewidth": imageWidth, "imageheight": imageHeight]
+                if videoUrl != nil && isVideo == "true" {
+                    values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "videoUrl": videoUrl!,"imageUrl": imageUrl!, "imagewidth": imageWidth, "imageheight": imageHeight, "isVideo": "true"]
                 }
                 else {
-             values = ["fromid": fromId as Any, "toid": toID as Any,"text": messageText, "timestamp": timestamp]
+             values = ["fromid": fromId as Any, "toid": toID as Any,"text": messageText, "timestamp": timestamp, "isVideo": "false"]
                 }
             }
             
@@ -409,15 +423,20 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
         let message = messages[indexPath.item]
+        cell.message = message
         cell.chatLogController = self
         setupCell(message: message, cell: cell)
         
         cell.textView.text = message.text
         if let messageText = message.text {
             cell.bubbleWidthAnchor?.constant = estimatedHeightForText(text: messageText).width + 32
-        } else if message.imageUrl != nil {
+            cell.playButton.isHidden = true
+        } else if message.imageUrl != nil &&  message.isVideo! == "false" {
+            cell.playButton.isHidden = true
+
            cell.bubbleWidthAnchor?.constant = 200
-        } else if message.videoUrl != nil {
+        } else if message.isVideo! == "true" {
+            cell.playButton.isHidden = false
             cell.bubbleWidthAnchor?.constant = 200
         }
         return cell

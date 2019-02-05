@@ -209,12 +209,14 @@ class UserCell: UITableViewCell {
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
-    profileImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
         timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
         timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
         timeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        timeLabel.heightAnchor.constraint(equalTo: (textLabel?.heightAnchor)!).isActive = true
+        if let textLabelHeightAnchor = textLabel?.heightAnchor {
+            timeLabel.heightAnchor.constraint(equalTo: textLabelHeightAnchor).isActive = true
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
