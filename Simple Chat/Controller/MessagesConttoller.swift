@@ -36,6 +36,10 @@ class MessagesConttoller: UITableViewController {
         // https://simple-chat-d11ee.firebaseio.com/
         tableView.register(UserCell.self, forCellReuseIdentifier: MessagesConttoller.cellID)
         view.backgroundColor = .white
+        tableView.allowsMultipleSelectionDuringEditing = true
+        tableView.delegate = self
+        tableView.dataSource = self
+
         let logOutButton = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleLogout))
         navigationItem.leftBarButtonItem = logOutButton
         let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
@@ -71,6 +75,8 @@ class MessagesConttoller: UITableViewController {
             }, withCancel: nil)
             return
         }, withCancel: nil)
+        
+        self.deleteMessagesFromOutside()
     }
     
     func addDataToTableView(snapshot: DataSnapshot) {
@@ -131,6 +137,16 @@ class MessagesConttoller: UITableViewController {
                     self?.tableView.reloadData()
                 }
             }
+        }, withCancel: nil)
+        
+    }
+    
+    private func deleteMessagesFromOutside() {
+        
+        let ref = Database.database().reference().child("user-messages")
+        ref.observe(DataEventType.childRemoved, with: { (snapshot) in
+            self.messagesDictionary.removeValue(forKey: snapshot.key)
+            self.handleReloadTableview()
         }, withCancel: nil)
     }
     
@@ -218,6 +234,32 @@ class MessagesConttoller: UITableViewController {
             
         }, withCancel: nil)
 
+    }
+    
+    // MARK:- Tableview
+    
+   override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        let messages = self.messages[indexPath.row]
+        if let chatPartnerId = messages.chatPartnerId() {
+            Database.database().reference().child("user-messages").child(uid).child(chatPartnerId).removeValue { [weak self] (error, reference) in
+                
+                if error != nil {
+                    print("error while deleting message = \(String(describing: error))")
+                    return
+                }
+                
+                self?.messagesDictionary.removeValue(forKey: chatPartnerId)
+                self?.handleReloadTableview()
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
