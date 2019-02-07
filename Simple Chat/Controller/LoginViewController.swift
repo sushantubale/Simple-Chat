@@ -131,7 +131,7 @@ class LoginViewController: UIViewController {
             return
         }
         
-        FirebaseHelper.handlelogin(emailTextField, passwordTextField) { (error) in
+        FirebaseHelper.handlelogin(emailTextField, passwordTextField) { (error, user) in
             if error != nil {
                 
                 UIHelper.showSimpleAlert(self, "Error", (error?.localizedDescription)!, .alert)
@@ -141,13 +141,6 @@ class LoginViewController: UIViewController {
                 self.dismiss(animated: true, completion: nil)
             }
         }
-    }
-}
-
-extension UIColor {
-    
-    convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {
-        self.init(red: r/255, green: g/255, blue: b/255, alpha: 1)
     }
 }
 

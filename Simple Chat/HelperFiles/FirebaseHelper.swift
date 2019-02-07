@@ -11,19 +11,22 @@ import Firebase
 
 class FirebaseHelper: NSObject {
 
-    static  func handlelogin(_ emailTextField: String?,_ passwordTextField: String?, completion: @escaping (Error?) -> Void) {
+    static let currentUserId = Auth.auth().currentUser?.uid
+    static let userMessagesReference = Database.database().reference().child("user-messages")
+    static let messagesReference = Database.database().reference().child("messages")
+
+    static  func handlelogin(_ emailTextField: String?,_ passwordTextField: String?, completion: @escaping (Error?, AuthDataResult?) -> Void) {
         
         guard let email = emailTextField, let password = passwordTextField else {return}
         
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
             if error != nil {
-                completion(error)
+                completion(error, nil)
             } else {
-                completion(nil)
+                completion(nil, user)
             }
         }
     }
-    
     
     static func handleRegister(_ emailTextField: String,_ passwordTextField: String, completion: @escaping (AuthDataResult?, Error?) -> Void) {
         
@@ -37,7 +40,6 @@ class FirebaseHelper: NSObject {
                 completion(user, error)
 
             }
-
         }
     }
     
@@ -52,5 +54,14 @@ class FirebaseHelper: NSObject {
                 completion(nil, reference)
             }
         })
+    }
+    
+    static func observeMessages(completion: @escaping (Error?, DataSnapshot?) -> Void) {
+        
+        messagesReference.observe(.childAdded, with: { (snapshot) in
+            
+            completion(nil, snapshot)
+        }, withCancel: nil)
+
     }
 }

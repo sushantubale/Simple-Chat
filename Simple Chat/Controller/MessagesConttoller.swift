@@ -30,30 +30,41 @@ class MessagesConttoller: UITableViewController {
         return navBarTitle
     }()
     
+    lazy var logoutButton: UIBarButtonItem = {
+        let logoutbutton = UIBarButtonItem()
+        logoutbutton.title = "Logout"
+        logoutbutton.style = .plain
+        logoutbutton.target = self
+        logoutbutton.action = #selector(handleLogout)
+        return logoutbutton
+    }()
+    
+    lazy var newMessageButton: UIBarButtonItem = {
+        let newMessageButton = UIBarButtonItem()
+        newMessageButton.image = UIImage(named: "new_message")
+        newMessageButton.style = .plain
+        newMessageButton.target = self
+        newMessageButton.action = #selector(newMessageTapped)
+        return newMessageButton
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // https://simple-chat-d11ee.firebaseio.com/
         tableView.register(UserCell.self, forCellReuseIdentifier: MessagesConttoller.cellID)
         view.backgroundColor = .white
         tableView.allowsMultipleSelectionDuringEditing = true
         tableView.delegate = self
         tableView.dataSource = self
 
-        let logOutButton = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleLogout))
-        navigationItem.leftBarButtonItem = logOutButton
-        let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
+        navigationItem.leftBarButtonItem = logoutButton
         navigationItem.rightBarButtonItem = newMessageButton
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     func observeUserMessages() {
         
-        guard let uid = Auth.auth().currentUser?.uid else {
+        guard let uid = FirebaseHelper.currentUserId else {
             return
         }
         
@@ -66,7 +77,7 @@ class MessagesConttoller: UITableViewController {
             singleMssageRef.observe(.childAdded, with: { (snapshot) in
                 let messageId = snapshot.key
                 //print(messageId)
-                let messageReferences = Database.database().reference().child("messages").child(messageId)
+                let messageReferences = FirebaseHelper.messagesReference.child(messageId)
                 messageReferences.observe(.value, with: {[weak self] (snapshot) in
                     
                     self?.addDataToTableView(snapshot: snapshot)
@@ -116,8 +127,16 @@ class MessagesConttoller: UITableViewController {
     
     func observeMessages() {
         
-        let ref = Database.database().reference().child("messages")
-        ref.observe(.childAdded, with: {[weak self] (snapshot) in
+        FirebaseHelper.observeMessages { [weak self] (error, snapshot) in
+            
+            if error != nil {
+                print("Error fetching in messageods from observeMessages meth")
+                return
+            }
+            
+            guard let snapshot = snapshot else {
+                return
+            }
             
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 let message = Message()
@@ -137,7 +156,7 @@ class MessagesConttoller: UITableViewController {
                     self?.tableView.reloadData()
                 }
             }
-        }, withCancel: nil)
+        }
         
     }
     
@@ -164,7 +183,7 @@ class MessagesConttoller: UITableViewController {
     
     func checkUserLoggedIn() {
         
-        if Auth.auth().currentUser?.uid == nil {
+        if FirebaseHelper.currentUserId == nil {
             handleLogout()
         }
         else {
@@ -179,7 +198,7 @@ class MessagesConttoller: UITableViewController {
         tableView.reloadData()
         self.observeUserMessages()
 
-        guard  let uid = Auth.auth().currentUser?.uid else {return}
+        guard  let uid = FirebaseHelper.currentUserId else {return}
         Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { [weak self] (snapshot) in
             
             if let dictionary = snapshot.value as? [String: Any] {
@@ -244,7 +263,7 @@ class MessagesConttoller: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        guard let uid = Auth.auth().currentUser?.uid else {
+        guard let uid = FirebaseHelper.currentUserId else {
             return
         }
         let messages = self.messages[indexPath.row]
