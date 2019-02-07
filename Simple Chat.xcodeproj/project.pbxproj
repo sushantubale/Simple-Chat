@@ -98,7 +98,7 @@
 		0AEE888821C18C2300D03B0D /* Simple_ChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simple_ChatUITests.swift; sourceTree = "<group>"; };
 		0AEE888A21C18C2300D03B0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0AEFE54021DEBD75007B7807 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "plist/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,14 +199,6 @@
 			path = Storyboards;
 			sourceTree = "<group>";
 		};
-		0A579D4B220C08B1007A058D /* plist */ = {
-			isa = PBXGroup;
-			children = (
-				0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */,
-			);
-			path = plist;
-			sourceTree = "<group>";
-		};
 		0AEE885921C18C2200D03B0D = {
 			isa = PBXGroup;
 			children = (
@@ -232,11 +224,11 @@
 			isa = PBXGroup;
 			children = (
 				0AEE887421C18C2300D03B0D /* Info.plist */,
+				0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */,
 				0A579D48220C0884007A058D /* View */,
 				0A12E7A521E57BDA00C8C87F /* Cells */,
 				0A579D3F220BF587007A058D /* HelperFiles */,
 				0A579D49220C088B007A058D /* AppDelegate */,
-				0A579D4B220C08B1007A058D /* plist */,
 				0A51F07321C377F600C7D907 /* Model */,
 				0A4AD0A521C1A003006C8445 /* Controller */,
 				0A579D4A220C0898007A058D /* Storyboards */,
