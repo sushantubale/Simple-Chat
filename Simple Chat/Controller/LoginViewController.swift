@@ -34,6 +34,7 @@ class LoginViewController: UIViewController {
         button.layer.cornerRadius = 5
         button.layer.masksToBounds = true
         button.titleLabel?.font = .systemFont(ofSize: 24)
+        button.addTarget(self, action: #selector(handelLoginRegister), for: .touchUpInside)
         return button
     }()
     
@@ -97,6 +98,7 @@ class LoginViewController: UIViewController {
         loginRegisterSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
         loginRegisterSegmentedControl.tintColor = .white
         loginRegisterSegmentedControl.selectedSegmentIndex = 1
+        loginRegisterSegmentedControl.addTarget(self, action: #selector(handleSegmentedControl), for: .valueChanged)
         return loginRegisterSegmentedControl
     }()
     
@@ -117,7 +119,6 @@ class LoginViewController: UIViewController {
         loginRegisterSegmentedControl.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
         loginRegisterSegmentedControl.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: -12).isActive = true
         loginRegisterSegmentedControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        loginRegisterSegmentedControl.addTarget(self, action: #selector(handleSegmentedControl), for: .valueChanged)
         
     }
     
@@ -144,84 +145,92 @@ class LoginViewController: UIViewController {
     func setupRegisterButton() {
         
         view.addSubview(registerButton)
-        registerButton.addTarget(self, action: #selector(handelLoginRegister), for: .touchUpInside)
         registerButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         registerButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 12).isActive = true
         registerButton.widthAnchor.constraint(equalTo: containerView.widthAnchor, constant: -12).isActive = true
         registerButton.heightAnchor.constraint(equalToConstant: 30)
     }
     
-    func handlelogin() {
+    @objc func handelLoginRegister() {
         
-        guard let email = emailTextField.text, let password = passwordTextField.text else {return}
-
-        Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
-            if error != nil {
-                print("error = \(String(describing: error))")
-            }
-            else {
-                self.viewController?.fetchUserAndSetNavTitle()
-                self.dismiss(animated: true, completion: nil)
-            }
+        if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
+            handleLogin()
+        } else {
+            handleRegister()
         }
     }
     
     func handleRegister() {
         
-        guard let emailTextField = emailTextField.text, let passwordTextField = passwordTextField.text, let name = nameTextField.text else {
-            
+        guard let emailTextField = emailTextField.text, let passwordTextField = passwordTextField.text else {
+            UIHelper.showSimpleAlert(self, "Error", "Please enter all information to create your account", .alert)
             return
         }
 
-        Auth.auth().createUser(withEmail: emailTextField, password: passwordTextField) { [weak self](user, error) in
-            
-            
+        FirebaseHelper.handleRegister(emailTextField, passwordTextField) { (user, error) in
             if error != nil {
-                print("error is \(String(describing: error))")
-                return
-            }
-            let imageName = NSUUID().uuidString
-            
-            let storageRef = Storage.storage().reference().child(imageName)
-            
-            
-                if let compressedImage = self?.profileImageView.image?.jpegData(compressionQuality: 0.1) {
-                    
-               
-                storageRef.putData(compressedImage, metadata: nil, completion: { (metadata, err) in
-                    
-                    if err != nil {
-                        print(err!)
-                        return
-                    }
-                    
-                    storageRef.downloadURL(completion: { [weak self] (url, err) in
-                        if err != nil {
-                            print("failed to download url")
-                        }
-                        
-                        let profileImageURL = url?.absoluteString
-                        let values = ["name": name,
-                                      "email": emailTextField,
-                                      "imageurl": profileImageURL]
-                        guard let uid = user?.user.uid else {return}
-                        
-                        self?.storeUserData(uid: uid, values: values as [String : AnyObject])
-                    })
-                })
-                
+                UIHelper.showSimpleAlert(self, "Error", (error?.localizedDescription)!, .alert)
+            } else {
+                self.successHandleRegister(user)
             }
         }
     }
     
-    @objc func handelLoginRegister() {
+    private func successHandleRegister(_ user: AuthDataResult?) {
+    
+        guard let emailTextField = emailTextField.text, let name = nameTextField.text else {return}
+
+        let imageName = NSUUID().uuidString
         
-        if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
-            handlelogin()
-        } else {
-            handleRegister()
+        let storageRef = Storage.storage().reference().child(imageName)
+        
+        if let compressedImage = self.profileImageView.image?.jpegData(compressionQuality: 0.1) {
+            
+            storageRef.putData(compressedImage, metadata: nil, completion: { (metadata, err) in
+                
+                if err != nil {
+                    print(err!)
+                    return
+                }
+                
+                storageRef.downloadURL(completion: { [weak self] (url, err) in
+                    if err != nil {
+                        print("failed to download url")
+                    }
+                    
+                    let profileImageURL = url?.absoluteString
+                    let values = ["name": name,
+                                  "email": emailTextField,
+                                  "imageurl": profileImageURL]
+                    if let uid = user?.user.uid {
+                        self?.storeUserData(uid: uid, values: values as [String : AnyObject])
+                    }
+                })
+            })
+        }
+    }
+    
+    func handleLogin() {
+        
+        guard let emailTextField = emailTextField.text, let passwordTextField = passwordTextField.text else {
+            return
+        }
+
+        if emailTextField.isEmpty || passwordTextField.isEmpty {
+            UIHelper.showSimpleAlert(self, "Error", "Please enter all information to login", .alert)
+            return
         }
         
+        FirebaseHelper.handlelogin(emailTextField, passwordTextField) { (error) in
+            if error != nil {
+                
+                UIHelper.showSimpleAlert(self, "Error", (error?.localizedDescription)!, .alert)
+                
+            } else {
+                self.viewController?.fetchUserAndSetNavTitle()
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
     private func storeUserData(uid: String, values: [String: AnyObject]) {
@@ -237,6 +246,7 @@ class LoginViewController: UIViewController {
             self?.dismiss(animated: true, completion: nil)
         })
     }
+    
     func setupProfileImageView() {
         
         self.view.addSubview(profileImageView)
