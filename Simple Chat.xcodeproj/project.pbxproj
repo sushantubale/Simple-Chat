@@ -10,7 +10,6 @@
 		0A12E7A821E5881C00C8C87F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A12E7A621E57BFC00C8C87F /* ChatMessageCell.swift */; };
 		0A12E7A921E5881D00C8C87F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A12E7A621E57BFC00C8C87F /* ChatMessageCell.swift */; };
 		0A12E7AA21E5883F00C8C87F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A12E7A621E57BFC00C8C87F /* ChatMessageCell.swift */; };
-		0A13559A21CC4BBE002D2DCC /* MessagesConttoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */; };
 		0A21622D21CAE37F0046859B /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A21622C21CAE37F0046859B /* ChatLogController.swift */; };
 		0A21622E21CAE37F0046859B /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A21622C21CAE37F0046859B /* ChatLogController.swift */; };
 		0A21622F21CAE37F0046859B /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A21622C21CAE37F0046859B /* ChatLogController.swift */; };
@@ -32,6 +31,13 @@
 		0A579D3C220BA30A007A058D /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A579D3B220BA30A007A058D /* UIHelper.swift */; };
 		0A579D3D220BA30A007A058D /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A579D3B220BA30A007A058D /* UIHelper.swift */; };
 		0A579D3E220BA30A007A058D /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A579D3B220BA30A007A058D /* UIHelper.swift */; };
+		0A579D4D220C09F3007A058D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A579D4C220C09F3007A058D /* Default-568h@2x.png */; };
+		0A579D4E220C0A3A007A058D /* LoginRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A579D44220BF8D8007A058D /* LoginRegisterView.swift */; };
+		0A579D4F220C0A40007A058D /* MessagesConttoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */; };
+		0A579D50220C0A58007A058D /* MessagesConttoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */; };
+		0A579D51220C0A59007A058D /* MessagesConttoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */; };
+		0A579D52220C0A5C007A058D /* LoginRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A579D44220BF8D8007A058D /* LoginRegisterView.swift */; };
+		0A579D53220C0A5D007A058D /* LoginRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A579D44220BF8D8007A058D /* LoginRegisterView.swift */; };
 		0A5BB52821EAA88200C826D3 /* uploadImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A5BB52721EAA88200C826D3 /* uploadImage.png */; };
 		0AEE886621C18C2200D03B0D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886521C18C2200D03B0D /* AppDelegate.swift */; };
 		0AEE886B21C18C2200D03B0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AEE886921C18C2200D03B0D /* Main.storyboard */; };
@@ -74,6 +80,8 @@
 		0A51F07421C3780300C7D907 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		0A579D33220B9374007A058D /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		0A579D3B220BA30A007A058D /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
+		0A579D44220BF8D8007A058D /* LoginRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegisterView.swift; sourceTree = "<group>"; };
+		0A579D4C220C09F3007A058D /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		0A5BB52721EAA88200C826D3 /* uploadImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadImage.png; sourceTree = "<group>"; };
 		0AEE886221C18C2200D03B0D /* Simple Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simple Chat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AEE886521C18C2200D03B0D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -140,6 +148,8 @@
 		0A4AD0AA21C1CB18006C8445 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				0A4DC8BF2209FDC100B171CF /* play3.png */,
+				0A5BB52721EAA88200C826D3 /* uploadImage.png */,
 				0A4AD0A821C1CADD006C8445 /* profile_placeholder.jpg */,
 				0A4AD0A621C1C8F0006C8445 /* profile_picture.png */,
 			);
@@ -155,14 +165,52 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0AEE885921C18C2200D03B0D = {
+		0A579D3F220BF587007A058D /* HelperFiles */ = {
 			isa = PBXGroup;
 			children = (
 				0A579D3B220BA30A007A058D /* UIHelper.swift */,
 				0A579D33220B9374007A058D /* FirebaseHelper.swift */,
-				0A4DC8BF2209FDC100B171CF /* play3.png */,
-				0A5BB52721EAA88200C826D3 /* uploadImage.png */,
-				0A12E7A521E57BDA00C8C87F /* Cells */,
+			);
+			path = HelperFiles;
+			sourceTree = "<group>";
+		};
+		0A579D48220C0884007A058D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0A579D44220BF8D8007A058D /* LoginRegisterView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		0A579D49220C088B007A058D /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				0AEE886521C18C2200D03B0D /* AppDelegate.swift */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
+		0A579D4A220C0898007A058D /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				0AEE886921C18C2200D03B0D /* Main.storyboard */,
+				0AEE887121C18C2300D03B0D /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		0A579D4B220C08B1007A058D /* plist */ = {
+			isa = PBXGroup;
+			children = (
+				0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */,
+			);
+			path = plist;
+			sourceTree = "<group>";
+		};
+		0AEE885921C18C2200D03B0D = {
+			isa = PBXGroup;
+			children = (
+				0A579D4C220C09F3007A058D /* Default-568h@2x.png */,
 				0AEE886421C18C2200D03B0D /* Simple Chat */,
 				0AEE887C21C18C2300D03B0D /* Simple ChatTests */,
 				0AEE888721C18C2300D03B0D /* Simple ChatUITests */,
@@ -183,15 +231,17 @@
 		0AEE886421C18C2200D03B0D /* Simple Chat */ = {
 			isa = PBXGroup;
 			children = (
-				0AEE886521C18C2200D03B0D /* AppDelegate.swift */,
-				0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */,
+				0AEE887421C18C2300D03B0D /* Info.plist */,
+				0A579D48220C0884007A058D /* View */,
+				0A12E7A521E57BDA00C8C87F /* Cells */,
+				0A579D3F220BF587007A058D /* HelperFiles */,
+				0A579D49220C088B007A058D /* AppDelegate */,
+				0A579D4B220C08B1007A058D /* plist */,
 				0A51F07321C377F600C7D907 /* Model */,
 				0A4AD0A521C1A003006C8445 /* Controller */,
-				0AEE886921C18C2200D03B0D /* Main.storyboard */,
+				0A579D4A220C0898007A058D /* Storyboards */,
 				0AEE886F21C18C2300D03B0D /* Assets.xcassets */,
 				0A4AD0AA21C1CB18006C8445 /* images */,
-				0AEE887121C18C2300D03B0D /* LaunchScreen.storyboard */,
-				0AEE887421C18C2300D03B0D /* Info.plist */,
 				0AEE886C21C18C2200D03B0D /* Simple_Chat.xcdatamodeld */,
 			);
 			path = "Simple Chat";
@@ -321,6 +371,7 @@
 			files = (
 				0AEE887321C18C2300D03B0D /* LaunchScreen.storyboard in Resources */,
 				0AEE887021C18C2300D03B0D /* Assets.xcassets in Resources */,
+				0A579D4D220C09F3007A058D /* Default-568h@2x.png in Resources */,
 				0A4DC8C02209FDC100B171CF /* play3.png in Resources */,
 				0A5BB52821EAA88200C826D3 /* uploadImage.png in Resources */,
 				0A4AD0A721C1C8F0006C8445 /* profile_picture.png in Resources */,
@@ -352,14 +403,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A12E7AA21E5883F00C8C87F /* ChatMessageCell.swift in Sources */,
-				0A13559A21CC4BBE002D2DCC /* MessagesConttoller.swift in Sources */,
 				0A4AD0A221C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0A579D3C220BA30A007A058D /* UIHelper.swift in Sources */,
 				0AEE886621C18C2200D03B0D /* AppDelegate.swift in Sources */,
 				0A579D34220B9374007A058D /* FirebaseHelper.swift in Sources */,
 				0A21622D21CAE37F0046859B /* ChatLogController.swift in Sources */,
+				0A579D4E220C0A3A007A058D /* LoginRegisterView.swift in Sources */,
 				0AEE886E21C18C2200D03B0D /* Simple_Chat.xcdatamodeld in Sources */,
 				0AEFE54121DEBD75007B7807 /* Message.swift in Sources */,
+				0A579D4F220C0A40007A058D /* MessagesConttoller.swift in Sources */,
 				0A51F07521C3780300C7D907 /* Users.swift in Sources */,
 				0A51F07021C3748B00C7D907 /* MessageViewController.swift in Sources */,
 			);
@@ -374,8 +426,10 @@
 				0A51F07621C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54221DEBD75007B7807 /* Message.swift in Sources */,
+				0A579D52220C0A5C007A058D /* LoginRegisterView.swift in Sources */,
 				0A579D3D220BA30A007A058D /* UIHelper.swift in Sources */,
 				0A51F07121C3748B00C7D907 /* MessageViewController.swift in Sources */,
+				0A579D50220C0A58007A058D /* MessagesConttoller.swift in Sources */,
 				0A12E7A821E5881C00C8C87F /* ChatMessageCell.swift in Sources */,
 				0AEE887E21C18C2300D03B0D /* Simple_ChatTests.swift in Sources */,
 			);
@@ -390,8 +444,10 @@
 				0A51F07721C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54321DEBD75007B7807 /* Message.swift in Sources */,
+				0A579D53220C0A5D007A058D /* LoginRegisterView.swift in Sources */,
 				0A579D3E220BA30A007A058D /* UIHelper.swift in Sources */,
 				0A51F07221C3748B00C7D907 /* MessageViewController.swift in Sources */,
+				0A579D51220C0A59007A058D /* MessagesConttoller.swift in Sources */,
 				0A12E7A921E5881D00C8C87F /* ChatMessageCell.swift in Sources */,
 				0AEE888921C18C2300D03B0D /* Simple_ChatUITests.swift in Sources */,
 			);
