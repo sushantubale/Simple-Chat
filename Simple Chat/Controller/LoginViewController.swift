@@ -61,10 +61,15 @@ class LoginViewController: UIViewController {
     func handleRegister() {
         
         guard let emailTextField = loginRegisterView.emailTextField.text, let passwordTextField = loginRegisterView.passwordTextField.text else {
-            UIHelper.showSimpleAlert(self, "Error", "Please enter all information to create your account", .alert)
+            UIHelper.showSimpleAlert(self, "Error", "Please enter all information to create your account.", .alert)
             return
         }
-
+        
+        if passwordTextField.characters.count <= 6 {
+            UIHelper.showSimpleAlert(self, "Error", "Please enter the password to be more than 6 characters.", .alert)
+            return
+        }
+        
         FirebaseHelper.handleRegister(emailTextField, passwordTextField) { (user, error) in
             if error != nil {
                 UIHelper.showSimpleAlert(self, "Error", (error?.localizedDescription)!, .alert)
