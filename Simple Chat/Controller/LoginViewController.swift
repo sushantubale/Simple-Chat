@@ -131,7 +131,7 @@ class LoginViewController: UIViewController {
             return
         }
         
-        FirebaseHelper.handlelogin(emailTextField, passwordTextField) { (error) in
+        FirebaseHelper.handlelogin(emailTextField, passwordTextField) { (error, user) in
             if error != nil {
                 
                 UIHelper.showSimpleAlert(self, "Error", (error?.localizedDescription)!, .alert)

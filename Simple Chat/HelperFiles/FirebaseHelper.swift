@@ -16,15 +16,15 @@ class FirebaseHelper: NSObject {
     static let authUid = Auth.auth().currentUser?.uid
     static let userNode = Database.database().reference().child("users")
     
-    static  func handlelogin(_ emailTextField: String?,_ passwordTextField: String?, completion: @escaping (Error?) -> Void) {
+    static  func handlelogin(_ emailTextField: String?,_ passwordTextField: String?, completion: @escaping (Error?, AuthDataResult?) -> Void) {
     
         guard let email = emailTextField, let password = passwordTextField else {return}
         
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
             if error != nil {
-                completion(error)
+                completion(error, nil)
             } else {
-                completion(nil)
+                completion(nil, user)
             }
         }
     }
