@@ -49,6 +49,9 @@
 		0AEFE54121DEBD75007B7807 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEFE54021DEBD75007B7807 /* Message.swift */; };
 		0AEFE54221DEBD75007B7807 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEFE54021DEBD75007B7807 /* Message.swift */; };
 		0AEFE54321DEBD75007B7807 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEFE54021DEBD75007B7807 /* Message.swift */; };
+		0AF49ECB220D20760017662A /* ChatLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF49ECA220D20760017662A /* ChatLogView.swift */; };
+		0AF49ECC220D20760017662A /* ChatLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF49ECA220D20760017662A /* ChatLogView.swift */; };
+		0AF49ECD220D20760017662A /* ChatLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF49ECA220D20760017662A /* ChatLogView.swift */; };
 		0AFF5ED521C6082700F0A54E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +101,7 @@
 		0AEE888821C18C2300D03B0D /* Simple_ChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simple_ChatUITests.swift; sourceTree = "<group>"; };
 		0AEE888A21C18C2300D03B0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0AEFE54021DEBD75007B7807 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		0AF49ECA220D20760017662A /* ChatLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogView.swift; sourceTree = "<group>"; };
 		0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "plist/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -178,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				0A579D44220BF8D8007A058D /* LoginRegisterView.swift */,
+				0AF49ECA220D20760017662A /* ChatLogView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -394,6 +399,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF49ECB220D20760017662A /* ChatLogView.swift in Sources */,
 				0A12E7AA21E5883F00C8C87F /* ChatMessageCell.swift in Sources */,
 				0A4AD0A221C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0A579D3C220BA30A007A058D /* UIHelper.swift in Sources */,
@@ -418,6 +424,7 @@
 				0A51F07621C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54221DEBD75007B7807 /* Message.swift in Sources */,
+				0AF49ECC220D20760017662A /* ChatLogView.swift in Sources */,
 				0A579D52220C0A5C007A058D /* LoginRegisterView.swift in Sources */,
 				0A579D3D220BA30A007A058D /* UIHelper.swift in Sources */,
 				0A51F07121C3748B00C7D907 /* MessageViewController.swift in Sources */,
@@ -436,6 +443,7 @@
 				0A51F07721C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54321DEBD75007B7807 /* Message.swift in Sources */,
+				0AF49ECD220D20760017662A /* ChatLogView.swift in Sources */,
 				0A579D53220C0A5D007A058D /* LoginRegisterView.swift in Sources */,
 				0A579D3E220BA30A007A058D /* UIHelper.swift in Sources */,
 				0A51F07221C3748B00C7D907 /* MessageViewController.swift in Sources */,

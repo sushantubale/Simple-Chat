@@ -13,109 +13,62 @@ import MobileCoreServices
 
 class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    let sendMessageView = UIView()
 
+    lazy var chatLogView = ChatLogView(frame: CGRect(x: 0, y: 0, width:self.view.bounds.width, height: self.view.bounds.height))
     let cellID = "cellID"
+    
     var chatLogUser: Users?  {
         didSet {
             navigationItem.title = chatLogUser?.name
             observeLoggedInUserMessages()
         }
     }
-    var backButtonName: String?
-    lazy var sendMessageTextField: UITextField = {
-    let sendMessageTextField = UITextField()
-    sendMessageTextField.translatesAutoresizingMaskIntoConstraints = false
-    sendMessageTextField.backgroundColor = .white
-        sendMessageTextField.delegate = self
-        sendMessageTextField.placeholder = "Send Message...."
-
-        return sendMessageTextField
-    }()
     
+    var backButtonName: String?
+    
+
     var messages = [Message]()
-    var sendMessageViewBottomAnchor: NSLayoutConstraint?
 
     // MARK: - View Life cycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.keyboardDismissMode = .interactive
-        let toolbar:UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0,  width: self.view.frame.size.width, height: 30))
-
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneBtn: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonAction))
-        toolbar.setItems([flexSpace, doneBtn], animated: false)
-        toolbar.sizeToFit()
-
-        self.sendMessageTextField.inputAccessoryView = toolbar
+        self.view.addSubview(chatLogView)
+        setupCollectionViewAttributes()
+        chatLogView.uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
+        chatLogView.sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
+    }
+    
+    private func setupCollectionViewAttributes() {
         
-        setupSendMessageView()
+        collectionView.scrollsToTop = true
+        collectionView.keyboardDismissMode = .interactive
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = .white
         collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
-        
-        setupKeyboardObservers()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }
-    @objc func doneButtonAction() {
-        self.view.endEditing(true)
-    }
-    
-    func setupKeyboardObservers() {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
-    }
-    
-    @objc func keyboardWillShow(notification: NSNotification) {
-        
-        let keyboardSize = (notification.userInfo![UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
-        
-        let keyboardDuration = (notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue
-        self.collectionView.scrollsToTop = true
-        sendMessageViewBottomAnchor?.constant = -keyboardSize!.height
-        UIView.animate(withDuration: keyboardDuration!) {
-            self.view.layoutIfNeeded()
-        }
-}
-    
-    @objc func keyboardWillHide(notification: NSNotification) {
-
-        let keyboardDuration = (notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue
-
-        UIView.animate(withDuration: keyboardDuration!) {
-            self.sendMessageViewBottomAnchor?.constant = 0
-            self.view.layoutIfNeeded()
-        }
-
-    }
     
     func observeLoggedInUserMessages() {
         
-        guard let uid = Auth.auth().currentUser?.uid, let toId = chatLogUser?.id else {
-            return
-        }
+        guard let toId = chatLogUser?.id else {return}
         
-        let loggedInUserMessages = Database.database().reference().child("user-messages").child(uid).child(toId)
-        
-        loggedInUserMessages.observe(.childAdded, with: { (snapshot) in
+        FirebaseHelper.observeMessages(toId: toId,observeLoggedInUserMessages: true) { (snapshot) in
             
-
+            guard let snapshot = snapshot else {
+                return
+            }
+            
             let messageId = snapshot.key
-            let userMessageRef = Database.database().reference().child("messages").child(messageId)
-            
+            let userMessageRef = FirebaseHelper.messages.child(messageId)
             self.loadMessages(userMessageRef)
-
-        }, withCancel: nil)
+        }
     }
     
     func loadMessages(_ userMessageRef: DatabaseReference) {
@@ -135,78 +88,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                     let indexpath = IndexPath(item: self.messages.count - 1, section: 0)
                     self.collectionView.scrollToItem(at: indexpath, at: UICollectionView.ScrollPosition.bottom, animated: true)
                 }
-            
-            
         }, withCancel: nil)
-    }
-    
-    func setupSendMessageView() {
-        
-        sendMessageView.backgroundColor = .white
-        sendMessageView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(sendMessageView)
-        
-        setSendButtonAndTextFieldButton(sendMessageView)
-        
-        if #available(iOS 11.0, *) {
-            let guide = self.view.safeAreaLayoutGuide
-            sendMessageView.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
-            sendMessageView.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
-           sendMessageViewBottomAnchor = sendMessageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            sendMessageViewBottomAnchor?.isActive = true
-            sendMessageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        }
-        else {
-            NSLayoutConstraint(item: sendMessageView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
-            NSLayoutConstraint(item: sendMessageView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0).isActive = true
-        sendMessageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-            
-            sendMessageViewBottomAnchor = sendMessageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            sendMessageViewBottomAnchor?.isActive = true
-
-        }
-    }
-   
-    func setSendButtonAndTextFieldButton(_ sendMessageView: UIView) {
-        
-        let sendButton = UIButton()
-        sendButton.setTitle("Send", for: .normal)
-        sendButton.setTitleColor(.blue, for: .normal)
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendMessageView.addSubview(sendButton)
-        sendButton.rightAnchor.constraint(equalTo: sendMessageView.rightAnchor, constant: -5).isActive = true
-        sendButton.centerYAnchor.constraint(equalTo: sendMessageView.centerYAnchor).isActive = true
-        sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        
-        sendMessageView.addSubview(sendMessageTextField)
-        sendMessageTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor).isActive = true
-        sendMessageTextField.centerYAnchor.constraint(equalTo: sendMessageView.centerYAnchor).isActive = true
-        sendMessageTextField.heightAnchor.constraint(equalTo: sendMessageView.heightAnchor).isActive = true
-        
-        let uploadImageView = UIImageView()
-       uploadImageView.layer.cornerRadius = 15
-       uploadImageView.layer.masksToBounds = true
-        uploadImageView.translatesAutoresizingMaskIntoConstraints = false
-        uploadImageView.image = UIImage(named: "uploadImage.png")
-        sendMessageView.addSubview(uploadImageView)
-        uploadImageView.leftAnchor.constraint(equalTo: sendMessageView.leftAnchor, constant: 8).isActive = true
-        uploadImageView.centerYAnchor.constraint(equalTo: sendMessageView.centerYAnchor).isActive = true
-        uploadImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
-        sendMessageTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 16).isActive = true
-
-       uploadImageView.isUserInteractionEnabled = true
-        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
-
-        let seperatorView = UIView()
-        seperatorView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(seperatorView)
-        seperatorView.backgroundColor = .gray
-        seperatorView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        seperatorView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive  = true
-        seperatorView.bottomAnchor.constraint(lessThanOrEqualTo: sendMessageView.topAnchor).isActive = true
-        seperatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
     }
 
     @objc func handleUploadTap() {
@@ -223,9 +105,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
             handleVideoSelectedForUrl(videoUrl)
-            } else {
+        } else {
             handleImageSelectedForInfo(info)
-    }
+        }
     }
     
     func handleImageSelectedForInfo(_ info: [UIImagePickerController.InfoKey : Any]) {
@@ -360,7 +242,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         let timestamp = Date().timeIntervalSince1970
         var values = [String: Any]()
         
-        if let messageText = sendMessageTextField.text {
+        if let messageText = chatLogView.sendMessageTextField.text {
             if imageUrl != nil && isVideo == "false" {
                 values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "imageUrl": imageUrl!, "imagewidth": imageWidth, "imageheight": imageHeight, "isVideo": "false"]
             }
@@ -385,7 +267,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 
                 let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!).child(fromId!)
                 recipientUserMessagesRef.updateChildValues([messageId: 1])
-                self.sendMessageTextField.text = nil
+                self.chatLogView.sendMessageTextField.text = nil
             }
         }
     }
@@ -507,7 +389,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             
             self.blackBackgroundView!.alpha = 1
-            self.sendMessageView.alpha = 0
+            self.chatLogView.sendMessageView.alpha = 0
 
             let height = CGFloat((self.startingFrame?.height)!) / CGFloat((self.startingFrame?.width)!) * CGFloat((keyWindow?.frame.width)!)
 
@@ -526,7 +408,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
                 zoomingOutView.frame = self.startingFrame!
                 self.blackBackgroundView?.alpha = 0
-                self.sendMessageView.alpha = 1
+                self.chatLogView.sendMessageView.alpha = 1
             }) { (completed) in
                 
                 zoomingOutView.removeFromSuperview()

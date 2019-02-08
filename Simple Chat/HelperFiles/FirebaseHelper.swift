@@ -59,10 +59,21 @@ class FirebaseHelper: NSObject {
         })
     }
     
-    static func observeMessages(completion: @escaping (DataSnapshot?) -> Void) {
+    static func observeMessages(toId: String? = nil, observeLoggedInUserMessages: Bool = false, completion: @escaping (DataSnapshot?) -> Void) {
         
+        if observeLoggedInUserMessages {
+            guard let authUId = authUid, let toId = toId else {
+                return
+            }
+            userMessages.child(authUId).child(toId).observe(.childAdded, with: { (snapshot) in
+                completion(snapshot)
+                
+            }, withCancel: nil)
+            
+        } else {
         messages.observe(.childAdded) { (snapshot) in
             completion(snapshot)
+            }
         }
     }
     
@@ -124,5 +135,12 @@ class FirebaseHelper: NSObject {
             try Auth.auth().signOut()
             
         } catch {print(error)}
+    }
+    
+    static func fetchUsers(completion: @escaping (DataSnapshot?) -> Void) {
+        
+        userNode.observe(.childAdded, with: { (snapshot) in
+            completion(snapshot)
+        }, withCancel: nil)
     }
 }

@@ -27,7 +27,12 @@ class MessageViewController: UITableViewController {
     }
 
     func fetchUsers() {
-        Database.database().reference().child("users").observe(.childAdded, with: { [weak self] (snapshot) in
+        
+        FirebaseHelper.fetchUsers { [weak self] (snapshot) in
+            guard let snapshot = snapshot else {
+                print("Error in fetching users")
+                return
+            }
             
             if let dictionary = snapshot.value as? [String: Any] {
                 let user = Users()
@@ -38,14 +43,15 @@ class MessageViewController: UITableViewController {
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
-            
-        }, withCancel: nil)
+        }
+        
     }
     
     @objc func cancelTapped() {
         
         dismiss(animated: true, completion: nil)
     }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -58,7 +64,6 @@ class MessageViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return users.count
     }
 
