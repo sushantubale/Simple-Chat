@@ -24,6 +24,24 @@ class MessagesConttoller: UITableViewController {
         return image
     }()
     
+    lazy var logOutButton: UIBarButtonItem = {
+        let logOutButton = UIBarButtonItem()
+        logOutButton.title = "Logout"
+        logOutButton.style = .plain
+        logOutButton.target = self
+        logOutButton.action = #selector(handleLogout)
+        return logOutButton
+    }()
+    
+    lazy var newMessageButton: UIBarButtonItem = {
+        let newMessageButton = UIBarButtonItem()
+        newMessageButton.image = UIImage(named: "new_message")
+        newMessageButton.style = .plain
+        newMessageButton.target = self
+        newMessageButton.action = #selector(newMessageTapped)
+        return newMessageButton
+    }()
+
     let  navBarTitle: UILabel = {
       let navBarTitle = UILabel()
         navBarTitle.translatesAutoresizingMaskIntoConstraints = false
@@ -40,33 +58,26 @@ class MessagesConttoller: UITableViewController {
         tableView.delegate = self
         tableView.dataSource = self
 
-        let logOutButton = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleLogout))
         navigationItem.leftBarButtonItem = logOutButton
-        let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
         navigationItem.rightBarButtonItem = newMessageButton
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     func observeUserMessages() {
         
-        guard let uid = Auth.auth().currentUser?.uid else {
+        guard let uid = FirebaseHelper.authUid else {
             return
         }
         
-        let userMessageRef = Database.database().reference().child("user-messages").child(uid)
+        let userMessageRef = FirebaseHelper.userMessages.child(uid)
         userMessageRef.observe(.childAdded, with: { (snapshot) in
             
             let userId = snapshot.key
             
-            let singleMssageRef = Database.database().reference().child("user-messages").child(uid).child(userId)
+            let singleMssageRef = FirebaseHelper.userMessages.child(uid).child(userId)
             singleMssageRef.observe(.childAdded, with: { (snapshot) in
                 let messageId = snapshot.key
-                //print(messageId)
-                let messageReferences = Database.database().reference().child("messages").child(messageId)
+                let messageReferences = FirebaseHelper.messages.child(messageId)
                 messageReferences.observe(.value, with: {[weak self] (snapshot) in
                     
                     self?.addDataToTableView(snapshot: snapshot)
@@ -116,8 +127,11 @@ class MessagesConttoller: UITableViewController {
     
     func observeMessages() {
         
-        let ref = Database.database().reference().child("messages")
-        ref.observe(.childAdded, with: {[weak self] (snapshot) in
+        FirebaseHelper.observeMessages { [weak self] (snapshot) in
+            guard let snapshot = snapshot else {
+                print("failed to load messages")
+                return
+            }
             
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 let message = Message()
@@ -133,21 +147,21 @@ class MessagesConttoller: UITableViewController {
                 self?.messages.sorted(by: { (message1, message2) -> Bool in
                     return message2.timestamp!.intValue > message1.timestamp!.intValue
                 })
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
+                self?.reloadTableView()
             }
-        }, withCancel: nil)
-        
+        }
     }
     
     private func deleteMessagesFromOutside() {
         
-        let ref = Database.database().reference().child("user-messages")
-        ref.observe(DataEventType.childRemoved, with: { (snapshot) in
+        FirebaseHelper.deleteMessagesFromOutside { (snapshot) in
+            guard let snapshot = snapshot else {
+                print("cannot delete messages from outside")
+                return
+            }
             self.messagesDictionary.removeValue(forKey: snapshot.key)
             self.handleReloadTableview()
-        }, withCancel: nil)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -164,10 +178,9 @@ class MessagesConttoller: UITableViewController {
     
     func checkUserLoggedIn() {
         
-        if Auth.auth().currentUser?.uid == nil {
+        if FirebaseHelper.authUid == nil {
             handleLogout()
-        }
-        else {
+        } else {
             fetchUserAndSetNavTitle()
         }
     }
@@ -176,12 +189,13 @@ class MessagesConttoller: UITableViewController {
         
         messages.removeAll()
         messagesDictionary.removeAll()
-        tableView.reloadData()
+        self.reloadTableView()
         self.observeUserMessages()
-
-        guard  let uid = Auth.auth().currentUser?.uid else {return}
-        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { [weak self] (snapshot) in
-            
+        
+        FirebaseHelper.fetchUserAndSetNavTitle { [weak self] (snapshot) in
+            guard let snapshot = snapshot else {
+                return
+            }
             if let dictionary = snapshot.value as? [String: Any] {
                 let name = dictionary["name"] as? String
                 self?.getProfileImage(dictionary["imageurl"] as! String , completionHandler: { [weak self] (image) -> (Void) in
@@ -220,20 +234,15 @@ class MessagesConttoller: UITableViewController {
         guard let chatPartnerId = messages1 else {
             return
         }
-        
-        let ref = Database.database().reference().child("users").child(chatPartnerId)
-        ref.observe(.value, with: { (snapshot) in
-            
-            guard let dictionary = snapshot.value as? [String: AnyObject] else {
+        FirebaseHelper.messageControllerTableView(message1: chatPartnerId) { (snapshot) in
+            guard let snapshot = snapshot, let dictionary = snapshot.value as? [String: AnyObject] else {
                 return
             }
             let chatUser = Users()
             chatUser.id = snapshot.key
             chatUser.setValuesForKeys(dictionary)
             self.showChatLogcontroller(user: chatUser)
-            
-        }, withCancel: nil)
-
+        }
     }
     
     // MARK:- Tableview
@@ -244,18 +253,14 @@ class MessagesConttoller: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        guard let uid = Auth.auth().currentUser?.uid else {
-            return
-        }
         let messages = self.messages[indexPath.row]
+        
         if let chatPartnerId = messages.chatPartnerId() {
-            Database.database().reference().child("user-messages").child(uid).child(chatPartnerId).removeValue { [weak self] (error, reference) in
-                
+            FirebaseHelper.deleteMessagesFromTableView(chatPartnerId: chatPartnerId) { [weak self] (error, reference) in
                 if error != nil {
-                    print("error while deleting message = \(String(describing: error))")
+                    UIHelper.showSimpleAlert(self!, "Error", (error?.localizedDescription)!, UIAlertController.Style.alert)
                     return
                 }
-                
                 self?.messagesDictionary.removeValue(forKey: chatPartnerId)
                 self?.handleReloadTableview()
             }
@@ -283,22 +288,25 @@ class MessagesConttoller: UITableViewController {
         return cell!
     }
     
-
     private func setNameAndProfileImage(_ cell: UserCell, indexPath: IndexPath) {
         
-    if let id = messages[indexPath.row].chatPartnerId() {
-        let ref = Database.database().reference().child("users").child(id)
-        ref.observe(.value, with: { (snapshot) in
+        if let id = messages[indexPath.row].chatPartnerId() {
             
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                cell.textLabel?.text = dictionary["name"] as? String
-                if let profileImageURL = dictionary["imageurl"] {
-                    self.loadProfileImage(profileImageURL as! String, cell, self.tableView)
+            FirebaseHelper.setNameAndProfileImage(id: id) { (snapshot) in
+                
+                guard let snapshot = snapshot else {
+                    print("Error in setNameAndProfileImage")
+                    return
+                }
+                
+                if let dictionary = snapshot.value as? [String: AnyObject] {
+                    cell.textLabel?.text = dictionary["name"] as? String
+                    if let profileImageURL = dictionary["imageurl"] {
+                        self.loadProfileImage(profileImageURL as! String, cell, self.tableView)
+                    }
                 }
             }
-        }, withCancel: nil)
-
-}
+        }
     }
     
     private func loadProfileImage(_ url: String,_ cell: UserCell,_ tableviewObject: UITableView) {
@@ -311,7 +319,6 @@ class MessagesConttoller: UITableViewController {
             }
         }
         
-        
         if let url = URL(string: url) {
             URLSession.shared.dataTask(with: url) { (data, response, error) in
                 if error != nil  {
@@ -321,11 +328,9 @@ class MessagesConttoller: UITableViewController {
                 
                 if let data = data {
                     DispatchQueue.main.async {
-                        
                         if let downloadedImage = UIImage(data: data) {
                             self.imageCache?.setValue(downloadedImage, forKey: url.absoluteString)
                             cell.profileImageView.image = UIImage(data: data)
-                            
                         }
                     }
                 }
@@ -357,11 +362,7 @@ class MessagesConttoller: UITableViewController {
     
     @objc func handleLogout() {
         
-        do {
-            try Auth.auth().signOut()
-
-        } catch {print(error)}
-        
+        FirebaseHelper.logout()
         let viewController = LoginViewController()
         viewController.viewController = self
         self.present(viewController, animated: true, completion: nil)
@@ -371,6 +372,6 @@ class MessagesConttoller: UITableViewController {
         
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
         chatLogController.chatLogUser = user
-    navigationController?.pushViewController(chatLogController, animated: true)
+        navigationController?.pushViewController(chatLogController, animated: true)
     }
 }
