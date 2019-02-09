@@ -43,13 +43,12 @@ class LoginViewController: UIViewController {
         loginRegisterView.passwordTextfieldHeightConstraint = loginRegisterView.passwordTextField.heightAnchor.constraint(equalTo: loginRegisterView.containerView.heightAnchor, multiplier: loginRegisterView.loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 1/2 : 1/3)
         loginRegisterView.passwordTextfieldHeightConstraint?.isActive = true
     }
-
     
     func handlelogin() {
         
         guard let email = loginRegisterView.emailTextField.text, let password = loginRegisterView.passwordTextField.text else {return}
-
-        Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
+        
+        FirebaseHelper.handleLogin(email: email, password: password) { (user, error) in
             if error != nil {
                 print("error = \(String(describing: error))")
             }
