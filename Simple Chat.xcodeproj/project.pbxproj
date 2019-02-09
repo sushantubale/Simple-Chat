@@ -128,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				0A27C7F3220F5C41009C0803 /* LoginRegisterView.swift */,
+				0A27C7FC220F755B009C0803 /* FirebaseHelper */,
 			);
 			path = ViewHelper;
 			sourceTree = "<group>";
@@ -207,7 +208,6 @@
 				0AEE887121C18C2300D03B0D /* LaunchScreen.storyboard */,
 				0AEE887421C18C2300D03B0D /* Info.plist */,
 				0AEE886C21C18C2200D03B0D /* Simple_Chat.xcdatamodeld */,
-				0A27C7FC220F755B009C0803 /* FirebaseHelper */,
 			);
 			path = "Simple Chat";
 			sourceTree = "<group>";

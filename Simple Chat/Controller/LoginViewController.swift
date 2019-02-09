@@ -61,30 +61,25 @@ class LoginViewController: UIViewController {
     
     func handleRegister() {
         
-        guard let emailTextField = loginRegisterView.emailTextField.text, let passwordTextField = loginRegisterView.passwordTextField.text, let name = loginRegisterView.nameTextField.text else {
-            
+        guard let email = loginRegisterView.emailTextField.text, let password = loginRegisterView.passwordTextField.text, let name = loginRegisterView.nameTextField.text else {
             return
         }
-
-        Auth.auth().createUser(withEmail: emailTextField, password: passwordTextField) { [weak self](user, error) in
-            
+        
+        FirebaseHelper.handleRegister(email: email, password: password, name: name) { [weak self] (user, error) in
             
             if error != nil {
                 print("error is \(String(describing: error))")
                 return
             }
-            let imageName = NSUUID().uuidString
             
+            let imageName = NSUUID().uuidString
             let storageRef = Storage.storage().reference().child(imageName)
             
-            
             if let compressedImage = self?.loginRegisterView.profileImageView.image?.jpegData(compressionQuality: 0.1) {
-                    
-               
-                storageRef.putData(compressedImage, metadata: nil, completion: { (metadata, err) in
-                    
-                    if err != nil {
-                        print(err!)
+                
+                FirebaseHelper.storeData(compressedImage: compressedImage, storageRef: storageRef, completion: { (metadata, error) in
+                    if error != nil {
+                        print(error as Any)
                         return
                     }
                     
@@ -95,14 +90,13 @@ class LoginViewController: UIViewController {
                         
                         let profileImageURL = url?.absoluteString
                         let values = ["name": name,
-                                      "email": emailTextField,
+                                      "email": email,
                                       "imageurl": profileImageURL]
                         guard let uid = user?.user.uid else {return}
-                        
                         self?.storeUserData(uid: uid, values: values as [String : AnyObject])
                     })
                 })
-                
+
             }
         }
     }
