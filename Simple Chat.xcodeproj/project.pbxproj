@@ -128,7 +128,6 @@
 			isa = PBXGroup;
 			children = (
 				0A27C7F3220F5C41009C0803 /* LoginRegisterView.swift */,
-				0A27C7FC220F755B009C0803 /* FirebaseHelper */,
 			);
 			path = ViewHelper;
 			sourceTree = "<group>";
@@ -138,7 +137,8 @@
 			children = (
 				0A27C7F8220F7556009C0803 /* FirebaseHelper.swift */,
 			);
-			path = FirebaseHelper;
+			name = FirebaseHelper;
+			path = Model/FirebaseHelper;
 			sourceTree = "<group>";
 		};
 		0A4AD0A521C1A003006C8445 /* Controller */ = {
@@ -200,6 +200,7 @@
 				0A27C7F7220F745B009C0803 /* ViewHelper */,
 				0AEE886521C18C2200D03B0D /* AppDelegate.swift */,
 				0AFF5ED421C6082700F0A54E /* GoogleService-Info.plist */,
+				0A27C7FC220F755B009C0803 /* FirebaseHelper */,
 				0A51F07321C377F600C7D907 /* Model */,
 				0A4AD0A521C1A003006C8445 /* Controller */,
 				0AEE886921C18C2200D03B0D /* Main.storyboard */,

@@ -15,6 +15,7 @@ class MessagesConttoller: UITableViewController {
     var imageCache: NSCache<AnyObject,AnyObject>?
     var messagesDictionary = [String: Message]()
     static let cellID = "cell"
+    
     var messages = [Message]()
     let navBarImageView:UIImageView = {
         let image = UIImageView()
@@ -30,25 +31,37 @@ class MessagesConttoller: UITableViewController {
         return navBarTitle
     }()
     
+    lazy var logoutButton: UIBarButtonItem = {
+        let logoutButton = UIBarButtonItem()
+        logoutButton.title = "Logout"
+        logoutButton.style = UIBarButtonItem.Style.plain
+        logoutButton.target = self
+        logoutButton.action = #selector(handleLogout)
+        return logoutButton
+    }()
+    
+    lazy var newMessageButton: UIBarButtonItem = {
+        let newMessageButton = UIBarButtonItem()
+        newMessageButton.image = UIImage(named: "new_message")
+        newMessageButton.style = UIBarButtonItem.Style.plain
+        newMessageButton.target = self
+        newMessageButton.action = #selector(newMessageTapped)
+        return newMessageButton
+        
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // https://simple-chat-d11ee.firebaseio.com/
         tableView.register(UserCell.self, forCellReuseIdentifier: MessagesConttoller.cellID)
         view.backgroundColor = .white
         tableView.allowsMultipleSelectionDuringEditing = true
         tableView.delegate = self
         tableView.dataSource = self
 
-        let logOutButton = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleLogout))
-        navigationItem.leftBarButtonItem = logOutButton
-        let newMessageButton = UIBarButtonItem(image: UIImage(named: "new_message"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(newMessageTapped))
+        navigationItem.leftBarButtonItem = logoutButton
         navigationItem.rightBarButtonItem = newMessageButton
         
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     func observeUserMessages() {
@@ -61,11 +74,9 @@ class MessagesConttoller: UITableViewController {
         userMessageRef.observe(.childAdded, with: { (snapshot) in
             
             let userId = snapshot.key
-            
             let singleMssageRef = Database.database().reference().child("user-messages").child(uid).child(userId)
             singleMssageRef.observe(.childAdded, with: { (snapshot) in
                 let messageId = snapshot.key
-                //print(messageId)
                 let messageReferences = Database.database().reference().child("messages").child(messageId)
                 messageReferences.observe(.value, with: {[weak self] (snapshot) in
                     
@@ -101,14 +112,13 @@ class MessagesConttoller: UITableViewController {
     private func handleReloadTableview() {
         
         self.messages = Array(self.messagesDictionary.values)
-                self.messages.sorted(by: { (message1, message2) -> Bool in
-                    if let message1Timestamp = message1.timestamp?.intValue, let message2Timestamp = message2.timestamp?.intValue {
-                        print("message1Timestamp or message2Timestamp is empty")
-                        return message1Timestamp > message2Timestamp
-                    }
-                    return false
+        self.messages.sorted(by: { (message1, message2) -> Bool in
+            if let message1Timestamp = message1.timestamp?.intValue, let message2Timestamp = message2.timestamp?.intValue {
+                print("message1Timestamp or message2Timestamp is empty")
+                return message1Timestamp > message2Timestamp
+            }
+            return false
         })
-        
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(reloadTableView), userInfo: nil, repeats: false)
 
@@ -117,8 +127,12 @@ class MessagesConttoller: UITableViewController {
     func observeMessages() {
         
         let ref = Database.database().reference().child("messages")
-        ref.observe(.childAdded, with: {[weak self] (snapshot) in
+        
+        FirebaseHelper.observeMessages(ref: ref) { [weak self] (snapshot) in
             
+            guard let snapshot = snapshot else {
+                return
+            }
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 let message = Message()
                 message.setValuesForKeys(dictionary)
@@ -133,21 +147,21 @@ class MessagesConttoller: UITableViewController {
                 self?.messages.sorted(by: { (message1, message2) -> Bool in
                     return message2.timestamp!.intValue > message1.timestamp!.intValue
                 })
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
+                self?.reloadTableView()
             }
-        }, withCancel: nil)
-        
+        }
     }
     
     private func deleteMessagesFromOutside() {
         
         let ref = Database.database().reference().child("user-messages")
-        ref.observe(DataEventType.childRemoved, with: { (snapshot) in
-            self.messagesDictionary.removeValue(forKey: snapshot.key)
-            self.handleReloadTableview()
-        }, withCancel: nil)
+        FirebaseHelper.deleteMessagesFromOutside(ref: ref) { [weak self] (snapshot) in
+            guard let snapshot = snapshot else {
+                return
+            }
+            self?.messagesDictionary.removeValue(forKey: snapshot.key)
+            self?.handleReloadTableview()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -357,20 +371,16 @@ class MessagesConttoller: UITableViewController {
     
     @objc func handleLogout() {
         
-        do {
-            try Auth.auth().signOut()
-
-        } catch {print(error)}
+        FirebaseHelper.logout()
         
         let viewController = LoginViewController()
         viewController.viewController = self
         self.present(viewController, animated: true, completion: nil)
     }
-    
+
     func showChatLogcontroller(user: Users) {
-        
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
         chatLogController.chatLogUser = user
-    navigationController?.pushViewController(chatLogController, animated: true)
+        navigationController?.pushViewController(chatLogController, animated: true)
     }
 }
