@@ -43,6 +43,26 @@ class FirebaseHelper: NSObject {
                 completion(metadata, nil)
             }
         }
+    }
+    
+    static func observeMessages(ref: DatabaseReference, completion: @escaping (DataSnapshot?) -> ()) {
         
+        ref.observe(.childAdded, with: { (snapshot) in
+            completion(snapshot)
+        }, withCancel: nil)
+    }
+    
+    static func deleteMessagesFromOutside(ref: DatabaseReference, completion: @escaping (DataSnapshot?) -> ()) {
+        
+        ref.observe(DataEventType.childRemoved, with: { (snapshot) in
+            completion(snapshot)
+        }, withCancel: nil)
+    }
+    
+    static func logout() {
+        
+        do {
+            try Auth.auth().signOut()
+        } catch {print("error logging out")}
     }
 }

@@ -124,12 +124,8 @@ class LoginViewController: UIViewController {
             self?.dismiss(animated: true, completion: nil)
         })
     }
-
-
-    
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        
         return .lightContent
     }
 }
