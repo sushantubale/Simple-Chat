@@ -45,7 +45,7 @@ class FirebaseHelper: NSObject {
         }
     }
     
-    static func observeMessages(ref: DatabaseReference, completion: @escaping (DataSnapshot?) -> ()) {
+    static func childAddedObserver(ref: DatabaseReference, completion: @escaping (DataSnapshot?) -> ()) {
         
         ref.observe(.childAdded, with: { (snapshot) in
             completion(snapshot)
@@ -64,5 +64,32 @@ class FirebaseHelper: NSObject {
         do {
             try Auth.auth().signOut()
         } catch {print("error logging out")}
+    }
+    
+    static func fetchUsers(ref: DatabaseReference, completion: @escaping (DataSnapshot?) -> ()) {
+        
+        Database.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
+            completion(snapshot)
+            }, withCancel: nil)
+    }
+    
+    static func observeSingleEventOfValue(userMessageRef: DatabaseReference, completion: @escaping (DataSnapshot?) -> ()) {
+    
+        userMessageRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            completion(snapshot)
+        }, withCancel: nil)
+    }
+    
+    static func putFiletoFirebase(uploadTask: StorageReference, videoUrl: URL, completion: @escaping (StorageMetadata?, Error?) -> ()) {
+        
+        uploadTask.putFile(from: videoUrl, metadata: nil) { (responseMetadata, error) in
+            
+            if error != nil {
+                print(error as Any)
+                completion(nil, error)
+            } else {
+                completion(responseMetadata, error)
+            }
+        }
     }
 }

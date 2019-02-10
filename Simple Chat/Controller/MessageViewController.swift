@@ -15,20 +15,33 @@ class MessageViewController: UITableViewController {
     var users = [Users]()
     var imageCache: NSCache<AnyObject,AnyObject>?
     
+    lazy var leftBarButton: UIBarButtonItem = {
+        let leftBarButton = UIBarButtonItem()
+        leftBarButton.title = "Cancel"
+        leftBarButton.style = .plain
+        leftBarButton.target = self
+        leftBarButton.action = #selector(cancelTapped)
+        return leftBarButton
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tableView.register(UserCell.self, forCellReuseIdentifier: MessageViewController.cellId)
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelTapped))
+        navigationItem.leftBarButtonItem = leftBarButton
         
         fetchUsers()
     }
 
     func fetchUsers() {
-        Database.database().reference().child("users").observe(.childAdded, with: { [weak self] (snapshot) in
-            
+        
+        let ref = Database.database().reference().child("users")
+        
+        FirebaseHelper.fetchUsers(ref: ref) { [weak self] (snapshot) in
+            guard let snapshot = snapshot else {
+                print("failed to return users")
+                return
+            }
             if let dictionary = snapshot.value as? [String: Any] {
                 let user = Users()
                 user.id = snapshot.key
@@ -38,18 +51,17 @@ class MessageViewController: UITableViewController {
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
-            
-        }, withCancel: nil)
+        }
     }
     
     @objc func cancelTapped() {
         
         dismiss(animated: true, completion: nil)
     }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
@@ -58,7 +70,6 @@ class MessageViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return users.count
     }
 
@@ -67,7 +78,6 @@ class MessageViewController: UITableViewController {
         let user = users[indexPath.row]
         chatLogController.chatLogUser = user
         navigationController?.pushViewController(chatLogController, animated: true)
-
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -80,15 +90,12 @@ class MessageViewController: UITableViewController {
             cell1.detailTextLabel?.text = user.email
             
             if let profileImageURL = user.imageurl {
-                
                 self.loadProfileImage(profileImageURL, cell1, tableView)
             }
             return cell1
-
         }
         return cell!
     }
-    
     
     private func loadProfileImage(_ url: String,_ cell: UserCell,_ tableviewObject: UITableView) {
         
@@ -99,7 +106,6 @@ class MessageViewController: UITableViewController {
                 return
             }
         }
-
         
         if let url = URL(string: url) {
             URLSession.shared.dataTask(with: url) { (data, response, error) in
@@ -110,117 +116,13 @@ class MessageViewController: UITableViewController {
                 
                 if let data = data {
                     DispatchQueue.main.async {
-                    
                         if let downloadedImage = UIImage(data: data) {
                             self.imageCache?.setValue(downloadedImage, forKey: url.absoluteString)
                             cell.profileImageView.image = UIImage(data: data)
-
                         }
-                        
                     }
                 }
                 }.resume()
         }
     }
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
-
-
-class UserCell: UITableViewCell {
-    
-    var profileImageView: UIImageView = {
-    let imageView = UIImageView()
-        imageView.image = UIImage(named: "")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 20
-        imageView.layer.masksToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    
-    var timeLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        if let textLabel = textLabel, let detailTextLabel = detailTextLabel {
-            textLabel.frame = CGRect(x: 76, y: textLabel.frame.origin.y - 2, width: textLabel.frame.width, height: textLabel.frame.height)
-            detailTextLabel.frame = CGRect(x: 76, y: detailTextLabel.frame.origin.y + 2, width: detailTextLabel.frame.width, height: detailTextLabel.frame.height)
-            
-            textLabel.font = UIFont.boldSystemFont(ofSize: 16)
-            detailTextLabel.font = UIFont.boldSystemFont(ofSize: 16)
-        }
-    }
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-        
-        addSubview(profileImageView)
-        addSubview(timeLabel)
-        
-        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
-        profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        profileImageView.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        profileImageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        
-        timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
-        timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
-        timeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        if let textLabelHeightAnchor = textLabel?.heightAnchor {
-            timeLabel.heightAnchor.constraint(equalTo: textLabelHeightAnchor).isActive = true
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-

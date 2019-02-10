@@ -128,7 +128,7 @@ class MessagesConttoller: UITableViewController {
         
         let ref = Database.database().reference().child("messages")
         
-        FirebaseHelper.observeMessages(ref: ref) { [weak self] (snapshot) in
+        FirebaseHelper.childAddedObserver(ref: ref) { [weak self] (snapshot) in
             
             guard let snapshot = snapshot else {
                 return
