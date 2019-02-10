@@ -57,8 +57,7 @@ class ChatMessageCell: UICollectionViewCell {
         messageImageView.layer.cornerRadius = 16
         messageImageView.translatesAutoresizingMaskIntoConstraints = false
         messageImageView.layer.masksToBounds = true
-        
-       messageImageView.isUserInteractionEnabled = true
+        messageImageView.isUserInteractionEnabled = true
         messageImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleZoomTap)))
         return messageImageView
     }()
@@ -66,7 +65,9 @@ class ChatMessageCell: UICollectionViewCell {
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleViewLeftAnchor: NSLayoutConstraint?
     var bubbleViewRightAnchor: NSLayoutConstraint?
-
+    var playerLayer: AVPlayerLayer?
+    var player: AVPlayer?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -80,7 +81,7 @@ class ChatMessageCell: UICollectionViewCell {
         messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
         messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
         bubbleView.addSubview(playButton)
-
+        
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
@@ -95,33 +96,38 @@ class ChatMessageCell: UICollectionViewCell {
         textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         textView.widthAnchor.constraint(equalToConstant: 200).isActive = true
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
-                textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
-
+        textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
         
-            bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
+        bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
         bubbleViewLeftAnchor?.isActive = false
-        
         bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
         bubbleViewRightAnchor?.isActive = true
-
+        
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
-
     }
-    var playerLayer: AVPlayerLayer?
-    var player: AVPlayer?
-    
+
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "rate" {
+            if self.player?.rate == 0.0 {
+                bubbleView.addSubview(playButton)
+            } else {
+                print("playback started")
+            }
+        }
+    }
+
     @objc func handlePlayVideo() {
     
         if let videoUrlString = message?.videoUrl, let url = URL(string: videoUrlString) {
-             player = AVPlayer(url: url)
-             playerLayer = AVPlayerLayer(player: player)
+            player = AVPlayer(url: url)
+            playerLayer = AVPlayerLayer(player: player)
             playerLayer!.frame = bubbleView.bounds
             bubbleView.layer.addSublayer(playerLayer!)
+            self.player!.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
             player!.play()
-            
         }
     }
     
@@ -203,3 +209,4 @@ class ChatMessageCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+

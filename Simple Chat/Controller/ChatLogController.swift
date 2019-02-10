@@ -16,6 +16,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     let sendMessageView = UIView()
 
     let cellID = "cellID"
+    
     var chatLogUser: Users?  {
         didSet {
             navigationItem.title = chatLogUser?.name
@@ -23,14 +24,30 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
     }
     var backButtonName: String?
+    
     lazy var sendMessageTextField: UITextField = {
-    let sendMessageTextField = UITextField()
-    sendMessageTextField.translatesAutoresizingMaskIntoConstraints = false
-    sendMessageTextField.backgroundColor = .white
+        let sendMessageTextField = UITextField()
+        sendMessageTextField.translatesAutoresizingMaskIntoConstraints = false
+        sendMessageTextField.backgroundColor = .white
         sendMessageTextField.delegate = self
         sendMessageTextField.placeholder = "Send Message...."
-
         return sendMessageTextField
+    }()
+    
+    lazy var toolBar: UIToolbar = {
+        let toolbar = UIToolbar()
+        toolbar.frame = CGRect(x: 0, y: 0,  width: self.view.frame.size.width, height: 30)
+        toolbar.sizeToFit()
+        return toolbar
+    }()
+    
+    lazy var doneBtn: UIBarButtonItem = {
+        let doneBtn = UIBarButtonItem()
+        doneBtn.title = "Done"
+        doneBtn.style = .done
+        doneBtn.target = self
+        doneBtn.action = #selector(doneButtonAction)
+        return doneBtn
     }()
     
     var messages = [Message]()
@@ -41,45 +58,39 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.keyboardDismissMode = .interactive
-        let toolbar:UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0,  width: self.view.frame.size.width, height: 30))
-
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneBtn: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonAction))
-        toolbar.setItems([flexSpace, doneBtn], animated: false)
-        toolbar.sizeToFit()
-
-        self.sendMessageTextField.inputAccessoryView = toolbar
+        setupCollectionViewSettings()
         
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolBar.setItems([flexSpace, doneBtn], animated: false)
+        self.sendMessageTextField.inputAccessoryView = toolBar
         setupSendMessageView()
+        setupKeyboardObservers()
+    }
+    
+    private func setupCollectionViewSettings() {
+        collectionView.keyboardDismissMode = .interactive
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = .white
         collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
-        
-        setupKeyboardObservers()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    deinit {
         NotificationCenter.default.removeObserver(self)
     }
+
     @objc func doneButtonAction() {
         self.view.endEditing(true)
     }
     
     func setupKeyboardObservers() {
-        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        
+
         let keyboardSize = (notification.userInfo![UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
-        
         let keyboardDuration = (notification.userInfo![UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue
         self.collectionView.scrollsToTop = true
         sendMessageViewBottomAnchor?.constant = -keyboardSize!.height
@@ -96,7 +107,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             self.sendMessageViewBottomAnchor?.constant = 0
             self.view.layoutIfNeeded()
         }
-
     }
     
     func observeLoggedInUserMessages() {
@@ -104,40 +114,39 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         guard let uid = Auth.auth().currentUser?.uid, let toId = chatLogUser?.id else {
             return
         }
-        
         let loggedInUserMessages = Database.database().reference().child("user-messages").child(uid).child(toId)
         
-        loggedInUserMessages.observe(.childAdded, with: { (snapshot) in
+        FirebaseHelper.childAddedObserver(ref: loggedInUserMessages) { [weak self] (snapshot) in
             
-
+            guard let snapshot = snapshot else {
+                print("ChatLogController observeLoggedInUserMessage error")
+                return
+            }
+            
             let messageId = snapshot.key
             let userMessageRef = Database.database().reference().child("messages").child(messageId)
-            
-            self.loadMessages(userMessageRef)
-
-        }, withCancel: nil)
+            self?.loadMessages(userMessageRef)
+        }
     }
     
     func loadMessages(_ userMessageRef: DatabaseReference) {
         
-        userMessageRef.observeSingleEvent(of: .value, with: { (snapshot) in
+        FirebaseHelper.observeSingleEventOfValue(userMessageRef: userMessageRef) { (snapshot) in
             
-            guard let dictionary = snapshot.value as? [String: AnyObject] else {
+            guard let snapshot = snapshot, let dictionary = snapshot.value as? [String: AnyObject] else {
                 return
             }
             
             let messages = Message()
             messages.setValuesForKeys(dictionary)
-                self.messages.append(messages)
-                
-                DispatchQueue.main.async {
-                    self.collectionView.reloadData()
-                    let indexpath = IndexPath(item: self.messages.count - 1, section: 0)
-                    self.collectionView.scrollToItem(at: indexpath, at: UICollectionView.ScrollPosition.bottom, animated: true)
-                }
+            self.messages.append(messages)
             
-            
-        }, withCancel: nil)
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                let indexpath = IndexPath(item: self.messages.count - 1, section: 0)
+                self.collectionView.scrollToItem(at: indexpath, at: UICollectionView.ScrollPosition.bottom, animated: true)
+            }
+        }
     }
     
     func setupSendMessageView() {
@@ -152,18 +161,15 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             let guide = self.view.safeAreaLayoutGuide
             sendMessageView.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
             sendMessageView.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
-           sendMessageViewBottomAnchor = sendMessageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            sendMessageViewBottomAnchor?.isActive = true
-            sendMessageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        }
-        else {
-            NSLayoutConstraint(item: sendMessageView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
-            NSLayoutConstraint(item: sendMessageView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0).isActive = true
-        sendMessageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-            
             sendMessageViewBottomAnchor = sendMessageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             sendMessageViewBottomAnchor?.isActive = true
-
+            sendMessageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        } else {
+            NSLayoutConstraint(item: sendMessageView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
+            NSLayoutConstraint(item: sendMessageView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0).isActive = true
+            sendMessageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            sendMessageViewBottomAnchor = sendMessageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            sendMessageViewBottomAnchor?.isActive = true
         }
     }
    
@@ -185,8 +191,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         sendMessageTextField.heightAnchor.constraint(equalTo: sendMessageView.heightAnchor).isActive = true
         
         let uploadImageView = UIImageView()
-       uploadImageView.layer.cornerRadius = 15
-       uploadImageView.layer.masksToBounds = true
+        uploadImageView.layer.cornerRadius = 15
+        uploadImageView.layer.masksToBounds = true
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
         uploadImageView.image = UIImage(named: "uploadImage.png")
         sendMessageView.addSubview(uploadImageView)
@@ -196,7 +202,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
         sendMessageTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 16).isActive = true
 
-       uploadImageView.isUserInteractionEnabled = true
+        uploadImageView.isUserInteractionEnabled = true
         uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
 
         let seperatorView = UIView()
@@ -223,9 +229,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
             handleVideoSelectedForUrl(videoUrl)
-            } else {
+        } else {
             handleImageSelectedForInfo(info)
-    }
+        }
     }
     
     func handleImageSelectedForInfo(_ info: [UIImagePickerController.InfoKey : Any]) {
@@ -243,45 +249,37 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             uploadToFirebaseStorageUsingImage(image: selectedImage)
         }
         dismiss(animated: true, completion: nil)
-        
     }
     
     func handleVideoSelectedForUrl(_ videoUrl: URL) {
         
         let fileName = NSUUID().uuidString + ".mov"
-
-        let uploadTask = Storage.storage().reference().child(fileName).putFile(from: videoUrl, metadata: nil) { (responseMetadata, error) in
+        let uploadTask = Storage.storage().reference().child(fileName)
+        
+       FirebaseHelper.putFiletoFirebase(uploadTask: uploadTask, videoUrl: videoUrl) { [weak self] (responseMetadata, error) in
             
+            guard let metadata = responseMetadata, let path = metadata.path else {
+                return
+            }
+
             if error != nil {
                 print(error as Any)
                 return
             }
             
-            guard let metadata = responseMetadata, let path = metadata.path else {
-                return
-            }
-            
-            self.getDownloadURL(from: path, completion: { (url1, error1) in
+            self?.getDownloadURL(from: path, completion: { (url1, error1) in
                 if error1 != nil {
                     return
                 }
-                
-                let thumbnailImage = self.thumbnailImageForVideoUrl(videoUrl: (url1!.absoluteString))
-                self.uploadToFirebaseStorageUsingImage(image: thumbnailImage!, isVideo: "true", videoUrl: url1?.absoluteString)
+                guard let url1 = url1 else {
+                    return
+                }
+
+                if let thumbnailImage = self?.thumbnailImageForVideoUrl(videoUrl: (url1.absoluteString)) {
+                    self?.uploadToFirebaseStorageUsingImage(image: thumbnailImage, isVideo: "true", videoUrl: url1.absoluteString)
+                }
             })
-        }
-        
-        dismiss(animated: true, completion: nil)
-        
-        uploadTask.observe(.progress) { (snapshot) in
-            
-            if let completedUnit = snapshot.progress?.completedUnitCount {
-                print(completedUnit)
-            }
-        }
-        
-        uploadTask.observe(.success) { (snapshot) in
-            print("successfully uploaded image")
+            self?.dismiss(animated: true, completion: nil)
         }
     }
     
@@ -290,11 +288,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         Storage.storage().reference().child(path).downloadURL { (url, err) in
             if err != nil {
                 completion(nil, err)
-
             }
             else {
                 completion(url, nil)
-
             }
         }
     }
@@ -302,11 +298,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
    private func thumbnailImageForVideoUrl(videoUrl: String) -> UIImage? {
         let assest = AVAsset(url: URL(string: videoUrl)!)
         let imageGenerator = AVAssetImageGenerator(asset: assest)
-        do
-        {
+        do {
              let thumbnailcgImage = try imageGenerator.copyCGImage(at: CMTimeMake(value: 1, timescale: 60), actualTime: nil)
-            return UIImage(cgImage: thumbnailcgImage)
-
+                return UIImage(cgImage: thumbnailcgImage)
         }catch {
             print(error)
         }
@@ -535,20 +529,16 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
 }
 
-extension ChatLogController
-{
-    func hideKeyboard()
-    {
+extension ChatLogController {
+    func hideKeyboard() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(
             target: self,
             action: #selector(ChatLogController.dismissKeyboard))
-        
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
     
-    @objc func dismissKeyboard()
-    {
+    @objc func dismissKeyboard() {
         view.endEditing(true)
     }
 }

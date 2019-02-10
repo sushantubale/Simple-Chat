@@ -18,6 +18,9 @@
 		0A27C7F9220F7556009C0803 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27C7F8220F7556009C0803 /* FirebaseHelper.swift */; };
 		0A27C7FA220F7556009C0803 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27C7F8220F7556009C0803 /* FirebaseHelper.swift */; };
 		0A27C7FB220F7556009C0803 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27C7F8220F7556009C0803 /* FirebaseHelper.swift */; };
+		0A2B5741220FA89700AF4CE4 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2B5740220FA89700AF4CE4 /* UserCell.swift */; };
+		0A2B5742220FA89700AF4CE4 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2B5740220FA89700AF4CE4 /* UserCell.swift */; };
+		0A2B5743220FA89700AF4CE4 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2B5740220FA89700AF4CE4 /* UserCell.swift */; };
 		0A4AD0A221C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
 		0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
 		0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
@@ -66,6 +69,7 @@
 		0A21622C21CAE37F0046859B /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 		0A27C7F3220F5C41009C0803 /* LoginRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegisterView.swift; sourceTree = "<group>"; };
 		0A27C7F8220F7556009C0803 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
+		0A2B5740220FA89700AF4CE4 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		0A4AD0A621C1C8F0006C8445 /* profile_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile_picture.png; sourceTree = "<group>"; };
 		0A4AD0A821C1CADD006C8445 /* profile_placeholder.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = profile_placeholder.jpg; sourceTree = "<group>"; };
@@ -120,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				0A12E7A621E57BFC00C8C87F /* ChatMessageCell.swift */,
+				0A2B5740220FA89700AF4CE4 /* UserCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -382,6 +387,7 @@
 				0AEE886E21C18C2200D03B0D /* Simple_Chat.xcdatamodeld in Sources */,
 				0AEFE54121DEBD75007B7807 /* Message.swift in Sources */,
 				0A51F07521C3780300C7D907 /* Users.swift in Sources */,
+				0A2B5741220FA89700AF4CE4 /* UserCell.swift in Sources */,
 				0A51F07021C3748B00C7D907 /* MessageViewController.swift in Sources */,
 				0A27C7F9220F7556009C0803 /* FirebaseHelper.swift in Sources */,
 				0A27C7F4220F5C41009C0803 /* LoginRegisterView.swift in Sources */,
@@ -397,6 +403,7 @@
 				0A51F07621C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54221DEBD75007B7807 /* Message.swift in Sources */,
+				0A2B5742220FA89700AF4CE4 /* UserCell.swift in Sources */,
 				0A51F07121C3748B00C7D907 /* MessageViewController.swift in Sources */,
 				0A12E7A821E5881C00C8C87F /* ChatMessageCell.swift in Sources */,
 				0AEE887E21C18C2300D03B0D /* Simple_ChatTests.swift in Sources */,
@@ -412,6 +419,7 @@
 				0A51F07721C3780300C7D907 /* Users.swift in Sources */,
 				0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54321DEBD75007B7807 /* Message.swift in Sources */,
+				0A2B5743220FA89700AF4CE4 /* UserCell.swift in Sources */,
 				0A51F07221C3748B00C7D907 /* MessageViewController.swift in Sources */,
 				0A12E7A921E5881D00C8C87F /* ChatMessageCell.swift in Sources */,
 				0AEE888921C18C2300D03B0D /* Simple_ChatUITests.swift in Sources */,
