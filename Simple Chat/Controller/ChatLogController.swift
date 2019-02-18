@@ -11,7 +11,7 @@ import Firebase
 import AVFoundation
 import MobileCoreServices
 
-class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate {
     
     let sendMessageView = UIView()
 
@@ -217,14 +217,30 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
 
     @objc func handleUploadTap() {
         
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String, kUTTypeGIF as String]
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.allowsEditing = true
-        present(imagePicker, animated: true, completion: nil)
+        let alert = UIAlertController(title: "Please Select an Option", message: "", preferredStyle: .actionSheet)
+        
+        alert.addAction(UIAlertAction(title: "Send Photos or Videos", style: .default , handler:{ (UIAlertAction)in
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String, kUTTypeGIF as String]
+            imagePicker.sourceType = .photoLibrary
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true, completion: nil)
+
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Record and Send AR", style: .default , handler:{ (UIAlertAction)in
+            let newViewController = NewViewController()
+            let navController = UINavigationController(rootViewController: newViewController)
+            self.present(navController, animated: true, completion: nil)
+        }))
+        
+        self.present(alert, animated: true, completion: {
+            print("completion block")
+        })
+
     }
-    
+
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
