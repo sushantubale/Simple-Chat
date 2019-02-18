@@ -10,7 +10,6 @@ import UIKit
 import Photos
 import SceneKit
 import ARKit
-import SceneKitVideoRecorder
 
 class NewViewController: UIViewController, ARSCNViewDelegate {
     

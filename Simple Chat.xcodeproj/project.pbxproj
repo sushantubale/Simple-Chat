@@ -39,6 +39,75 @@
 		0A51F07621C3780300C7D907 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51F07421C3780300C7D907 /* Users.swift */; };
 		0A51F07721C3780300C7D907 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51F07421C3780300C7D907 /* Users.swift */; };
 		0A5BB52821EAA88200C826D3 /* uploadImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A5BB52721EAA88200C826D3 /* uploadImage.png */; };
+		0AA96987221A8C33009AD851 /* AnyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96986221A8C33009AD851 /* AnyError.swift */; };
+		0AA96988221A8C33009AD851 /* AnyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96986221A8C33009AD851 /* AnyError.swift */; };
+		0AA96989221A8C33009AD851 /* AnyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96986221A8C33009AD851 /* AnyError.swift */; };
+		0AA9698B221A8C5F009AD851 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9698A221A8C5F009AD851 /* Async.swift */; };
+		0AA9698C221A8C5F009AD851 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9698A221A8C5F009AD851 /* Async.swift */; };
+		0AA9698D221A8C5F009AD851 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9698A221A8C5F009AD851 /* Async.swift */; };
+		0AA9698F221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9698E221A8CA2009AD851 /* AsyncType+Debug.swift */; };
+		0AA96990221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9698E221A8CA2009AD851 /* AsyncType+Debug.swift */; };
+		0AA96991221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9698E221A8CA2009AD851 /* AsyncType+Debug.swift */; };
+		0AA96993221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96992221A8CD4009AD851 /* AsyncType+ResultType.swift */; };
+		0AA96994221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96992221A8CD4009AD851 /* AsyncType+ResultType.swift */; };
+		0AA96995221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96992221A8CD4009AD851 /* AsyncType+ResultType.swift */; };
+		0AA96997221A8D9C009AD851 /* AsyncType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96996221A8D9C009AD851 /* AsyncType.swift */; };
+		0AA96998221A8D9C009AD851 /* AsyncType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96996221A8D9C009AD851 /* AsyncType.swift */; };
+		0AA96999221A8D9C009AD851 /* AsyncType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96996221A8D9C009AD851 /* AsyncType.swift */; };
+		0AA9699B221A8DE2009AD851 /* Dispatch+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9699A221A8DE2009AD851 /* Dispatch+BrightFutures.swift */; };
+		0AA9699C221A8DE2009AD851 /* Dispatch+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9699A221A8DE2009AD851 /* Dispatch+BrightFutures.swift */; };
+		0AA9699D221A8DE2009AD851 /* Dispatch+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9699A221A8DE2009AD851 /* Dispatch+BrightFutures.swift */; };
+		0AA9699F221A8DF4009AD851 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9699E221A8DF4009AD851 /* Error.swift */; };
+		0AA969A0221A8DF4009AD851 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9699E221A8DF4009AD851 /* Error.swift */; };
+		0AA969A1221A8DF4009AD851 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA9699E221A8DF4009AD851 /* Error.swift */; };
+		0AA969A3221A8E0E009AD851 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969A2221A8E0E009AD851 /* Errors.swift */; };
+		0AA969A4221A8E0E009AD851 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969A2221A8E0E009AD851 /* Errors.swift */; };
+		0AA969A5221A8E0E009AD851 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969A2221A8E0E009AD851 /* Errors.swift */; };
+		0AA969A7221A8E2D009AD851 /* ExecutionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969A6221A8E2D009AD851 /* ExecutionContext.swift */; };
+		0AA969A8221A8E2D009AD851 /* ExecutionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969A6221A8E2D009AD851 /* ExecutionContext.swift */; };
+		0AA969A9221A8E2D009AD851 /* ExecutionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969A6221A8E2D009AD851 /* ExecutionContext.swift */; };
+		0AA969AB221A8E44009AD851 /* FileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969AA221A8E44009AD851 /* FileController.swift */; };
+		0AA969AC221A8E44009AD851 /* FileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969AA221A8E44009AD851 /* FileController.swift */; };
+		0AA969AD221A8E44009AD851 /* FileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969AA221A8E44009AD851 /* FileController.swift */; };
+		0AA969AF221A8E60009AD851 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969AE221A8E60009AD851 /* Future.swift */; };
+		0AA969B0221A8E60009AD851 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969AE221A8E60009AD851 /* Future.swift */; };
+		0AA969B1221A8E60009AD851 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969AE221A8E60009AD851 /* Future.swift */; };
+		0AA969B3221A8E90009AD851 /* InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969B2221A8E90009AD851 /* InvalidationToken.swift */; };
+		0AA969B4221A8E90009AD851 /* InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969B2221A8E90009AD851 /* InvalidationToken.swift */; };
+		0AA969B5221A8E90009AD851 /* InvalidationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969B2221A8E90009AD851 /* InvalidationToken.swift */; };
+		0AA969B7221A8F4A009AD851 /* MutableAsyncType+ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969B6221A8F4A009AD851 /* MutableAsyncType+ResultType.swift */; };
+		0AA969B8221A8F4A009AD851 /* MutableAsyncType+ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969B6221A8F4A009AD851 /* MutableAsyncType+ResultType.swift */; };
+		0AA969B9221A8F4A009AD851 /* MutableAsyncType+ResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969B6221A8F4A009AD851 /* MutableAsyncType+ResultType.swift */; };
+		0AA969BB221A8F64009AD851 /* MutableAsyncType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969BA221A8F64009AD851 /* MutableAsyncType.swift */; };
+		0AA969BC221A8F64009AD851 /* MutableAsyncType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969BA221A8F64009AD851 /* MutableAsyncType.swift */; };
+		0AA969BD221A8F64009AD851 /* MutableAsyncType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969BA221A8F64009AD851 /* MutableAsyncType.swift */; };
+		0AA969BF221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969BE221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift */; };
+		0AA969C0221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969BE221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift */; };
+		0AA969C1221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969BE221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift */; };
+		0AA969C3221A8FA5009AD851 /* NoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969C2221A8FA5009AD851 /* NoError.swift */; };
+		0AA969C4221A8FA5009AD851 /* NoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969C2221A8FA5009AD851 /* NoError.swift */; };
+		0AA969C5221A8FA5009AD851 /* NoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969C2221A8FA5009AD851 /* NoError.swift */; };
+		0AA969C7221A8FC9009AD851 /* Number+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969C6221A8FC9009AD851 /* Number+BrightFutures.swift */; };
+		0AA969C8221A8FC9009AD851 /* Number+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969C6221A8FC9009AD851 /* Number+BrightFutures.swift */; };
+		0AA969C9221A8FC9009AD851 /* Number+BrightFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969C6221A8FC9009AD851 /* Number+BrightFutures.swift */; };
+		0AA969CB221A8FEC009AD851 /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CA221A8FEB009AD851 /* Options.swift */; };
+		0AA969CC221A8FEC009AD851 /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CA221A8FEB009AD851 /* Options.swift */; };
+		0AA969CD221A8FEC009AD851 /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CA221A8FEB009AD851 /* Options.swift */; };
+		0AA969CF221A901B009AD851 /* PixelBufferFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */; };
+		0AA969D0221A901B009AD851 /* PixelBufferFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */; };
+		0AA969D1221A901B009AD851 /* PixelBufferFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */; };
+		0AC0935F221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */; };
+		0AC09360221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */; };
+		0AC09361221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */; };
+		0AC09363221A9349009E5059 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC09362221A9349009E5059 /* Promise.swift */; };
+		0AC09364221A9349009E5059 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC09362221A9349009E5059 /* Promise.swift */; };
+		0AC09365221A9349009E5059 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC09362221A9349009E5059 /* Promise.swift */; };
+		0AC09370221A9791009E5059 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0936E221A9790009E5059 /* Result.swift */; };
+		0AC09371221A9791009E5059 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0936E221A9790009E5059 /* Result.swift */; };
+		0AC09372221A9791009E5059 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0936E221A9790009E5059 /* Result.swift */; };
+		0AC09373221A9791009E5059 /* ResultProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0936F221A9791009E5059 /* ResultProtocol.swift */; };
+		0AC09374221A9791009E5059 /* ResultProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0936F221A9791009E5059 /* ResultProtocol.swift */; };
+		0AC09375221A9791009E5059 /* ResultProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0936F221A9791009E5059 /* ResultProtocol.swift */; };
 		0AEE886621C18C2200D03B0D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886521C18C2200D03B0D /* AppDelegate.swift */; };
 		0AEE886B21C18C2200D03B0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AEE886921C18C2200D03B0D /* Main.storyboard */; };
 		0AEE886E21C18C2200D03B0D /* Simple_Chat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE886C21C18C2200D03B0D /* Simple_Chat.xcdatamodeld */; };
@@ -85,6 +154,29 @@
 		0A51F06F21C3748B00C7D907 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		0A51F07421C3780300C7D907 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		0A5BB52721EAA88200C826D3 /* uploadImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadImage.png; sourceTree = "<group>"; };
+		0AA96986221A8C33009AD851 /* AnyError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyError.swift; sourceTree = "<group>"; };
+		0AA9698A221A8C5F009AD851 /* Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
+		0AA9698E221A8CA2009AD851 /* AsyncType+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AsyncType+Debug.swift"; sourceTree = "<group>"; };
+		0AA96992221A8CD4009AD851 /* AsyncType+ResultType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AsyncType+ResultType.swift"; sourceTree = "<group>"; };
+		0AA96996221A8D9C009AD851 /* AsyncType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncType.swift; sourceTree = "<group>"; };
+		0AA9699A221A8DE2009AD851 /* Dispatch+BrightFutures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dispatch+BrightFutures.swift"; sourceTree = "<group>"; };
+		0AA9699E221A8DF4009AD851 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		0AA969A2221A8E0E009AD851 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		0AA969A6221A8E2D009AD851 /* ExecutionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionContext.swift; sourceTree = "<group>"; };
+		0AA969AA221A8E44009AD851 /* FileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileController.swift; sourceTree = "<group>"; };
+		0AA969AE221A8E60009AD851 /* Future.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Future.swift; sourceTree = "<group>"; };
+		0AA969B2221A8E90009AD851 /* InvalidationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidationToken.swift; sourceTree = "<group>"; };
+		0AA969B6221A8F4A009AD851 /* MutableAsyncType+ResultType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MutableAsyncType+ResultType.swift"; sourceTree = "<group>"; };
+		0AA969BA221A8F64009AD851 /* MutableAsyncType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutableAsyncType.swift; sourceTree = "<group>"; };
+		0AA969BE221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSOperationQueue+BrightFutures.swift"; sourceTree = "<group>"; };
+		0AA969C2221A8FA5009AD851 /* NoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoError.swift; sourceTree = "<group>"; };
+		0AA969C6221A8FC9009AD851 /* Number+BrightFutures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Number+BrightFutures.swift"; sourceTree = "<group>"; };
+		0AA969CA221A8FEB009AD851 /* Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
+		0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelBufferFactory.swift; sourceTree = "<group>"; };
+		0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitVideoRecorder.swift; sourceTree = "<group>"; };
+		0AC09362221A9349009E5059 /* Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
+		0AC0936E221A9790009E5059 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		0AC0936F221A9791009E5059 /* ResultProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultProtocol.swift; sourceTree = "<group>"; };
 		0AEE886221C18C2200D03B0D /* Simple Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simple Chat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AEE886521C18C2200D03B0D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AEE886721C18C2200D03B0D /* MessagesConttoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesConttoller.swift; sourceTree = "<group>"; };
@@ -186,6 +278,29 @@
 		0AEE885921C18C2200D03B0D = {
 			isa = PBXGroup;
 			children = (
+				0AC0936E221A9790009E5059 /* Result.swift */,
+				0AC0936F221A9791009E5059 /* ResultProtocol.swift */,
+				0AC09362221A9349009E5059 /* Promise.swift */,
+				0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */,
+				0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */,
+				0AA969CA221A8FEB009AD851 /* Options.swift */,
+				0AA969C6221A8FC9009AD851 /* Number+BrightFutures.swift */,
+				0AA969C2221A8FA5009AD851 /* NoError.swift */,
+				0AA969BE221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift */,
+				0AA969BA221A8F64009AD851 /* MutableAsyncType.swift */,
+				0AA969B6221A8F4A009AD851 /* MutableAsyncType+ResultType.swift */,
+				0AA969B2221A8E90009AD851 /* InvalidationToken.swift */,
+				0AA969AE221A8E60009AD851 /* Future.swift */,
+				0AA969AA221A8E44009AD851 /* FileController.swift */,
+				0AA969A6221A8E2D009AD851 /* ExecutionContext.swift */,
+				0AA969A2221A8E0E009AD851 /* Errors.swift */,
+				0AA9699E221A8DF4009AD851 /* Error.swift */,
+				0AA9699A221A8DE2009AD851 /* Dispatch+BrightFutures.swift */,
+				0AA96996221A8D9C009AD851 /* AsyncType.swift */,
+				0AA96992221A8CD4009AD851 /* AsyncType+ResultType.swift */,
+				0AA9698E221A8CA2009AD851 /* AsyncType+Debug.swift */,
+				0AA9698A221A8C5F009AD851 /* Async.swift */,
+				0AA96986221A8C33009AD851 /* AnyError.swift */,
 				0A3C914F221A629200F590CD /* NewViewController.swift */,
 				0A3C9155221A651000F590CD /* ship.scn */,
 				0A3C9156221A651000F590CD /* texture.png */,
@@ -393,18 +508,41 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A12E7AA21E5883F00C8C87F /* ChatMessageCell.swift in Sources */,
+				0AA9699B221A8DE2009AD851 /* Dispatch+BrightFutures.swift in Sources */,
 				0A13559A21CC4BBE002D2DCC /* MessagesConttoller.swift in Sources */,
+				0AA969CB221A8FEC009AD851 /* Options.swift in Sources */,
+				0AA9698F221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */,
 				0A4AD0A221C19FFA006C8445 /* LoginViewController.swift in Sources */,
+				0AA969C7221A8FC9009AD851 /* Number+BrightFutures.swift in Sources */,
+				0AA969CF221A901B009AD851 /* PixelBufferFactory.swift in Sources */,
+				0AA96987221A8C33009AD851 /* AnyError.swift in Sources */,
+				0AA969AB221A8E44009AD851 /* FileController.swift in Sources */,
 				0AEE886621C18C2200D03B0D /* AppDelegate.swift in Sources */,
+				0AC09370221A9791009E5059 /* Result.swift in Sources */,
+				0AA969B7221A8F4A009AD851 /* MutableAsyncType+ResultType.swift in Sources */,
 				0A21622D21CAE37F0046859B /* ChatLogController.swift in Sources */,
+				0AA9699F221A8DF4009AD851 /* Error.swift in Sources */,
+				0AA969B3221A8E90009AD851 /* InvalidationToken.swift in Sources */,
+				0AC0935F221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */,
 				0AEE886E21C18C2200D03B0D /* Simple_Chat.xcdatamodeld in Sources */,
 				0AEFE54121DEBD75007B7807 /* Message.swift in Sources */,
+				0AA96993221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */,
 				0A51F07521C3780300C7D907 /* Users.swift in Sources */,
+				0AA969BB221A8F64009AD851 /* MutableAsyncType.swift in Sources */,
+				0AA969A3221A8E0E009AD851 /* Errors.swift in Sources */,
 				0A2B5741220FA89700AF4CE4 /* UserCell.swift in Sources */,
 				0A3C9150221A629200F590CD /* NewViewController.swift in Sources */,
+				0AA969C3221A8FA5009AD851 /* NoError.swift in Sources */,
 				0A51F07021C3748B00C7D907 /* MessageViewController.swift in Sources */,
+				0AA969AF221A8E60009AD851 /* Future.swift in Sources */,
+				0AA96997221A8D9C009AD851 /* AsyncType.swift in Sources */,
+				0AA969A7221A8E2D009AD851 /* ExecutionContext.swift in Sources */,
 				0A27C7F9220F7556009C0803 /* FirebaseHelper.swift in Sources */,
+				0AA9698B221A8C5F009AD851 /* Async.swift in Sources */,
+				0AC09373221A9791009E5059 /* ResultProtocol.swift in Sources */,
 				0A27C7F4220F5C41009C0803 /* LoginRegisterView.swift in Sources */,
+				0AA969BF221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */,
+				0AC09363221A9349009E5059 /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,15 +550,38 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AA9699C221A8DE2009AD851 /* Dispatch+BrightFutures.swift in Sources */,
+				0AA96988221A8C33009AD851 /* AnyError.swift in Sources */,
+				0AA969C8221A8FC9009AD851 /* Number+BrightFutures.swift in Sources */,
+				0AC09364221A9349009E5059 /* Promise.swift in Sources */,
+				0AA969A8221A8E2D009AD851 /* ExecutionContext.swift in Sources */,
+				0AA969AC221A8E44009AD851 /* FileController.swift in Sources */,
+				0AC09371221A9791009E5059 /* Result.swift in Sources */,
 				0A27C7FA220F7556009C0803 /* FirebaseHelper.swift in Sources */,
+				0AC09374221A9791009E5059 /* ResultProtocol.swift in Sources */,
+				0AA969D0221A901B009AD851 /* PixelBufferFactory.swift in Sources */,
 				0A21622E21CAE37F0046859B /* ChatLogController.swift in Sources */,
 				0A51F07621C3780300C7D907 /* Users.swift in Sources */,
+				0AA9698C221A8C5F009AD851 /* Async.swift in Sources */,
 				0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54221DEBD75007B7807 /* Message.swift in Sources */,
 				0A2B5742220FA89700AF4CE4 /* UserCell.swift in Sources */,
+				0AA969B8221A8F4A009AD851 /* MutableAsyncType+ResultType.swift in Sources */,
+				0AA969A0221A8DF4009AD851 /* Error.swift in Sources */,
 				0A51F07121C3748B00C7D907 /* MessageViewController.swift in Sources */,
+				0AA96994221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */,
+				0AA96990221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */,
+				0AA969C0221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */,
+				0AA969B4221A8E90009AD851 /* InvalidationToken.swift in Sources */,
+				0AA969B0221A8E60009AD851 /* Future.swift in Sources */,
+				0AC09360221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */,
+				0AA969CC221A8FEC009AD851 /* Options.swift in Sources */,
+				0AA96998221A8D9C009AD851 /* AsyncType.swift in Sources */,
+				0AA969BC221A8F64009AD851 /* MutableAsyncType.swift in Sources */,
+				0AA969C4221A8FA5009AD851 /* NoError.swift in Sources */,
 				0A3C9151221A629200F590CD /* NewViewController.swift in Sources */,
 				0A12E7A821E5881C00C8C87F /* ChatMessageCell.swift in Sources */,
+				0AA969A4221A8E0E009AD851 /* Errors.swift in Sources */,
 				0AEE887E21C18C2300D03B0D /* Simple_ChatTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -429,15 +590,38 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AA9699D221A8DE2009AD851 /* Dispatch+BrightFutures.swift in Sources */,
+				0AA96989221A8C33009AD851 /* AnyError.swift in Sources */,
+				0AA969C9221A8FC9009AD851 /* Number+BrightFutures.swift in Sources */,
+				0AC09365221A9349009E5059 /* Promise.swift in Sources */,
+				0AA969A9221A8E2D009AD851 /* ExecutionContext.swift in Sources */,
+				0AA969AD221A8E44009AD851 /* FileController.swift in Sources */,
+				0AC09372221A9791009E5059 /* Result.swift in Sources */,
 				0A27C7FB220F7556009C0803 /* FirebaseHelper.swift in Sources */,
+				0AC09375221A9791009E5059 /* ResultProtocol.swift in Sources */,
+				0AA969D1221A901B009AD851 /* PixelBufferFactory.swift in Sources */,
 				0A21622F21CAE37F0046859B /* ChatLogController.swift in Sources */,
 				0A51F07721C3780300C7D907 /* Users.swift in Sources */,
+				0AA9698D221A8C5F009AD851 /* Async.swift in Sources */,
 				0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */,
 				0AEFE54321DEBD75007B7807 /* Message.swift in Sources */,
 				0A2B5743220FA89700AF4CE4 /* UserCell.swift in Sources */,
+				0AA969B9221A8F4A009AD851 /* MutableAsyncType+ResultType.swift in Sources */,
+				0AA969A1221A8DF4009AD851 /* Error.swift in Sources */,
 				0A51F07221C3748B00C7D907 /* MessageViewController.swift in Sources */,
+				0AA96995221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */,
+				0AA96991221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */,
+				0AA969C1221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */,
+				0AA969B5221A8E90009AD851 /* InvalidationToken.swift in Sources */,
+				0AA969B1221A8E60009AD851 /* Future.swift in Sources */,
+				0AC09361221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */,
+				0AA969CD221A8FEC009AD851 /* Options.swift in Sources */,
+				0AA96999221A8D9C009AD851 /* AsyncType.swift in Sources */,
+				0AA969BD221A8F64009AD851 /* MutableAsyncType.swift in Sources */,
+				0AA969C5221A8FA5009AD851 /* NoError.swift in Sources */,
 				0A3C9152221A629200F590CD /* NewViewController.swift in Sources */,
 				0A12E7A921E5881D00C8C87F /* ChatMessageCell.swift in Sources */,
+				0AA969A5221A8E0E009AD851 /* Errors.swift in Sources */,
 				0AEE888921C18C2300D03B0D /* Simple_ChatUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
