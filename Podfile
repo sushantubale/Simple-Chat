@@ -9,6 +9,7 @@ pod 'Firebase/Firestore'
 pod 'Firebase/Database'
 pod 'Firebase/Storage'
 pod 'Firebase/Auth'
+pod 'SceneKitVideoRecorder', :git => 'https://github.com/svtek/SceneKitVideoRecorder.git', :branch => 'swift4'
 
   # Pods for Simple Chat
 
