@@ -11,10 +11,15 @@ import Firebase
 import AVFoundation
 import MobileCoreServices
 
+protocol sendARVideos: class {
+    func sendARVideo(_ dataURL: URL)
+}
+
 class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate {
     
     let sendMessageView = UIView()
-
+    weak var chatLogDelegate: sendARVideos!
+    
     let cellID = "cellID"
     
     var chatLogUser: Users?  {
@@ -250,6 +255,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
     }
     
+    func sendARVideo(_ dataURL: URL) {
+        handleVideoSelectedForUrl(dataURL)
+    }
+
     func handleImageSelectedForInfo(_ info: [UIImagePickerController.InfoKey : Any]) {
         
         var selectedImageForPicker: UIImage? = UIImage()
