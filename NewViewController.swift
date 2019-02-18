@@ -11,7 +11,11 @@ import Photos
 import SceneKit
 import ARKit
 
-class NewViewController: UIViewController, ARSCNViewDelegate {
+class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
+    
+    func sendARVideo(_ dataURL: URL) {
+        print("NewVC")
+    }
     
     lazy var playButton: UIButton = {
         let playbutton = UIButton(type: .system)
@@ -50,8 +54,6 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
 
         self.view.addSubview(sceneView)
         recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
-
-        // Do any additional setup after loading the view.
     }
     
     @objc func backAction() {
@@ -84,9 +86,11 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
     private func checkAuthorizationAndPresentActivityController(toShare data: Any, using presenter: UIViewController) {
         switch PHPhotoLibrary.authorizationStatus() {
         case .authorized:
-            let activityViewController = UIActivityViewController(activityItems: [data], applicationActivities: nil)
-            activityViewController.excludedActivityTypes = [UIActivity.ActivityType.addToReadingList, UIActivity.ActivityType.openInIBooks, UIActivity.ActivityType.print]
-            presenter.present(activityViewController, animated: true, completion: nil)
+            let chvc = ChatLogController()
+            chvc.chatLogDelegate = self
+            chvc.sendARVideo(data as! URL)
+            self.dismiss(animated: true, completion: nil)
+
         case .restricted, .denied:
             let libraryRestrictedAlert = UIAlertController(title: "Photos access denied",
                                                            message: "Please enable Photos access for this application in Settings > Privacy to allow saving screenshots.",
