@@ -275,7 +275,7 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0AEE885921C18C2200D03B0D = {
+		0AC09377221A9EC9009E5059 /* ARSupport */ = {
 			isa = PBXGroup;
 			children = (
 				0AC0936E221A9790009E5059 /* Result.swift */,
@@ -302,6 +302,14 @@
 				0AA9698A221A8C5F009AD851 /* Async.swift */,
 				0AA96986221A8C33009AD851 /* AnyError.swift */,
 				0A3C914F221A629200F590CD /* NewViewController.swift */,
+			);
+			name = ARSupport;
+			sourceTree = "<group>";
+		};
+		0AEE885921C18C2200D03B0D = {
+			isa = PBXGroup;
+			children = (
+				0AC09377221A9EC9009E5059 /* ARSupport */,
 				0A3C9155221A651000F590CD /* ship.scn */,
 				0A3C9156221A651000F590CD /* texture.png */,
 				0A4DC8BF2209FDC100B171CF /* play3.png */,

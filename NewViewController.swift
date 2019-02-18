@@ -28,7 +28,7 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Back", style: .plain, target: self, action: #selector(backAction))
         sceneView = ARSCNView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height), options: [:])
         sceneView.delegate = self
         playButton.addTarget(self, action: #selector(startRecording(sender:)), for: UIControl.Event.touchDown)
@@ -54,6 +54,10 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
         // Do any additional setup after loading the view.
     }
     
+    @objc func backAction() {
+        self.dismiss(animated: true, completion: nil)
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
