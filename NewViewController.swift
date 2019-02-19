@@ -12,11 +12,6 @@ import SceneKit
 import ARKit
 
 class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
-    func sendARVideo(_ dataURL: URL, _ object: ChatLogController, _ chatObject: Users) {
-        print("NewVC")
-
-    }
-    
     
     var users: Users?
         
@@ -60,6 +55,10 @@ class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
         recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
     }
     
+    func sendARVideo(_ dataURL: URL, _ object: ChatLogController, _ chatObject: Users) {
+        print("NewVC")
+    }
+
     @objc func backAction() {
         self.dismiss(animated: true, completion: nil)
     }
@@ -90,12 +89,19 @@ class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
     private func checkAuthorizationAndPresentActivityController(toShare data: Any, using presenter: UIViewController) {
         switch PHPhotoLibrary.authorizationStatus() {
         case .authorized:
-            let chvc = ChatLogController()
-            chvc.chatLogDelegate = self
-            chvc.sendARVideo(data as! URL, chvc, users!)
-            print(users)
-           self.dismiss(animated: true, completion: nil)
-
+//            let chvc = ChatLogController()
+//            chvc.chatLogDelegate = self
+//            chvc.sendARVideo(data as! URL, chvc, users!)
+//            print(users)
+//           self.dismiss(animated: true, completion: nil)
+            
+            let videoReviewViewController = VideoReviewViewController()
+            videoReviewViewController.url = data as! URL
+            DispatchQueue.main.async {
+                let navController = UINavigationController(rootViewController: videoReviewViewController)
+                self.present(navController, animated: true, completion: nil)
+            }
+            
         case .restricted, .denied:
             let libraryRestrictedAlert = UIAlertController(title: "Photos access denied",
                                                            message: "Please enable Photos access for this application in Settings > Privacy to allow saving screenshots.",
