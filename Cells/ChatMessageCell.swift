@@ -26,6 +26,17 @@ class ChatMessageCell: UICollectionViewCell {
         return tv
     }()
     
+    lazy var videoZoomInView: UIView = {
+        let videoZoomInView = UIView()
+        videoZoomInView.translatesAutoresizingMaskIntoConstraints = false
+        videoZoomInView.layer.cornerRadius = 16
+        videoZoomInView.layer.masksToBounds = true
+        videoZoomInView.backgroundColor = .red
+        videoZoomInView.isUserInteractionEnabled = true
+        videoZoomInView.target(forAction: #selector(handleVideoZoomInView), withSender: self)
+        return videoZoomInView
+    }()
+    
     let bubbleView: UIView = {
        let bubble = UIView()
         bubble.translatesAutoresizingMaskIntoConstraints = false
@@ -46,8 +57,8 @@ class ChatMessageCell: UICollectionViewCell {
     
     let profileImageView: UIImageView = {
         let profileImageView = UIImageView()
-       profileImageView.layer.cornerRadius = 16
-         profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.layer.cornerRadius = 16
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.masksToBounds = true
         return profileImageView
     }()
@@ -75,6 +86,7 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(textView)
         addSubview(profileImageView)
         
+
         bubbleView.addSubview(messageImageView)
         messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
         messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
@@ -107,8 +119,20 @@ class ChatMessageCell: UICollectionViewCell {
         bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        
+        bubbleView.addSubview(videoZoomInView)
+        videoZoomInView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
+        videoZoomInView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
+        videoZoomInView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
+        videoZoomInView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
+
+
     }
 
+    @objc func handleVideoZoomInView() {
+        
+    }
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "rate" {
             if self.player?.rate == 0.0 {
