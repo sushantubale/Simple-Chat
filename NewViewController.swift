@@ -40,11 +40,12 @@ class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
         sceneView.delegate = self
         playButton.addTarget(self, action: #selector(startRecording(sender:)), for: UIControl.Event.touchDown)
         playButton.addTarget(self, action: #selector(stopRecording(sender:)), for:  .touchUpInside)
+        
         // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+        //sceneView.showsStatistics = true
         
         // Create a new scene
-        let scene = SCNScene(named: "ship.scn")
+        let scene = SCNScene(named: "CeilingFanLamp.scn")
         
         // Set the scene to the view
         sceneView.scene = scene!
