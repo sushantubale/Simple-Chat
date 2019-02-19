@@ -14,21 +14,34 @@ class VideoViewController: UIViewController {
 
     var url: URL?
     
+    fileprivate var player: AVPlayer? {
+        didSet { player?.play() }
+    }
+    
+    var playerLayer: AVPlayerLayer?
+    fileprivate var playerObserver: Any?
+    
+    deinit {
+        guard let observer = playerObserver else { return }
+        NotificationCenter.default.removeObserver(observer)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let videoPlayer = AVPlayer(url: url!)
-        // create instance of playerlayer with videoPlayer
-        let playerLayer = AVPlayerLayer(player: videoPlayer)
-        // set its videoGravity to AVLayerVideoGravityResizeAspectFill to make it full size
-        playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        // add it to your view
-        playerLayer.frame = self.view.frame
-        
-        self.view.layer.addSublayer(playerLayer)
-        // start playing video
-        videoPlayer.play()
-        
+        let fileURL =  url
+        let player = AVPlayer(url: fileURL!)
+        let resetPlayer = {
+            player.seek(to: CMTime.zero)
+            player.play()
+        }
+        playerObserver = NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: nil) { notification in
+            resetPlayer()
+        }
+        self.player = player
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer!.frame = view.bounds
+        view.layer.insertSublayer(playerLayer!, at: 0)
 
         // Do any additional setup after loading the view.
     }

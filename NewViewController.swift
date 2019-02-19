@@ -11,7 +11,7 @@ import Photos
 import SceneKit
 import ARKit
 
-class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
+class NewViewController: UIViewController, ARSCNViewDelegate {
     
     var users: Users?
         
@@ -55,10 +55,6 @@ class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
         recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
     }
     
-    func sendARVideo(_ dataURL: URL, _ object: ChatLogController, _ chatObject: Users) {
-        print("NewVC")
-    }
-
     @objc func backAction() {
         self.dismiss(animated: true, completion: nil)
     }
@@ -89,14 +85,9 @@ class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
     private func checkAuthorizationAndPresentActivityController(toShare data: Any, using presenter: UIViewController) {
         switch PHPhotoLibrary.authorizationStatus() {
         case .authorized:
-//            let chvc = ChatLogController()
-//            chvc.chatLogDelegate = self
-//            chvc.sendARVideo(data as! URL, chvc, users!)
-//            print(users)
-//           self.dismiss(animated: true, completion: nil)
-            
             let videoReviewViewController = VideoReviewViewController()
             videoReviewViewController.url = data as! URL
+            videoReviewViewController.users = users
             DispatchQueue.main.async {
                 let navController = UINavigationController(rootViewController: videoReviewViewController)
                 self.present(navController, animated: true, completion: nil)

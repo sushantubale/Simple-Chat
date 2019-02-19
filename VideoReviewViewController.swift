@@ -10,9 +10,15 @@ import UIKit
 import AVFoundation
 import Foundation
 
-class VideoReviewViewController: UIViewController {
+class VideoReviewViewController: UIViewController, sendARVideos {
+    
+    func sendARVideo(_ dataURL: URL, _ object: ChatLogController, _ chatObject: Users) {
+        print("sendARVideo VideoReviewViewController")
+    }
 
+    var users: Users?
     var url: URL?
+    
     fileprivate var player: AVPlayer? {
         didSet { player?.play() }
     }
@@ -43,12 +49,23 @@ class VideoReviewViewController: UIViewController {
         playerLayer = AVPlayerLayer(player: player)
         playerLayer!.frame = view.bounds
         view.layer.insertSublayer(playerLayer!, at: 0)
+        
         let sendButton = UIButton()
         sendButton.setTitle("Send", for: .normal)
+        sendButton.backgroundColor = .red
         sendButton.setTitleColor(UIColor.blue, for: .normal)
-        sendButton.frame = CGRect(x: 15, y: -50, width: 300, height: 500)
-        //myFirstButton.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
+        sendButton.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+        sendButton.center = self.view.center
+        sendButton.addTarget(self, action: #selector(sendARVideoToChatLogController), for: .touchUpInside)
         self.view.addSubview(sendButton)
+    }
+    
+   @objc func sendARVideoToChatLogController() {
+        let chvc = ChatLogController()
+        chvc.chatLogDelegate = self
+        chvc.sendARVideo(url!, chvc, users!)
+        print(users)
+        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
     @objc func backAction() {
