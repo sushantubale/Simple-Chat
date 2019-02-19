@@ -12,7 +12,7 @@ import AVFoundation
 import MobileCoreServices
 
 protocol sendARVideos: class {
-    func sendARVideo(_ dataURL: URL)
+    func sendARVideo(_ dataURL: URL,_ object: ChatLogController,_ chatObject: Users)
 }
 
 class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate {
@@ -236,6 +236,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         alert.addAction(UIAlertAction(title: "Record and Send AR", style: .default , handler:{ (UIAlertAction)in
             let newViewController = NewViewController()
+            newViewController.users = self.chatLogUser
             let navController = UINavigationController(rootViewController: newViewController)
             self.present(navController, animated: true, completion: nil)
         }))
@@ -255,8 +256,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
     }
     
-    func sendARVideo(_ dataURL: URL) {
-        handleVideoSelectedForUrl(dataURL)
+    func sendARVideo(_ dataURL: URL,_ object: ChatLogController,_ chatObject: Users) {
+        handleVideoSelectedForUrlForAR(dataURL, object, chatObject)
     }
 
     func handleImageSelectedForInfo(_ info: [UIImagePickerController.InfoKey : Any]) {
@@ -274,6 +275,43 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             uploadToFirebaseStorageUsingImage(image: selectedImage)
         }
         dismiss(animated: true, completion: nil)
+    }
+    
+    func handleVideoSelectedForUrlForAR(_ videoUrl: URL,_ selfObject: ChatLogController? = nil,_ users: Users? = nil) {
+        guard let selfObject = selfObject else {
+            print("self is nil")
+            return
+        }
+        
+        let fileName = NSUUID().uuidString + ".mov"
+        let uploadTask = Storage.storage().reference().child(fileName)
+        
+        FirebaseHelper.putFiletoFirebase(uploadTask: uploadTask, videoUrl: videoUrl) { [weak self] (responseMetadata, error) in
+            
+            guard let metadata = responseMetadata, let path = metadata.path else {
+                return
+            }
+            
+            if error != nil {
+                print(error as Any)
+                return
+            }
+            
+            selfObject.getDownloadURL(from: path, completion: { (url1, error1) in
+                if error1 != nil {
+                    return
+                }
+                guard let url1 = url1 else {
+                    return
+                }
+                
+                if let thumbnailImage = selfObject.thumbnailImageForVideoUrl(videoUrl: (url1.absoluteString)) {
+                    selfObject.uploadToFirebaseStorageUsingImageForAR(image: thumbnailImage, videoUrl: url1.absoluteString, selfObject, users)
+                }
+            })
+            selfObject.dismiss(animated: true, completion: nil)
+        }
+
     }
     
     func handleVideoSelectedForUrl(_ videoUrl: URL) {
@@ -332,6 +370,35 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         return nil
     }
 
+    private func uploadToFirebaseStorageUsingImageForAR(image: UIImage, videoUrl: String? = nil,_ selfObject: ChatLogController? = nil,_ users: Users? = nil) {
+        
+        guard let selfObject = selfObject else {
+            return
+        }
+        
+        let imageName = NSUUID().uuidString
+        let ref = Storage.storage().reference().child("messages_images").child(imageName)
+        let messageImage = image.jpegData(compressionQuality: 0.2)
+        
+        ref.putData(messageImage!, metadata: nil) { (metadata, error) in
+            if error != nil {
+                
+                print("error while downoading image", error as Any)
+                return
+            }
+            
+            ref.downloadURL(completion: { (url, err) in
+                if err != nil {
+                    print("failed to download url")
+                }
+                
+                let profileImageURL = url?.absoluteString
+                selfObject.sendMessageForAR(profileImageURL, image.size.width, image.size.height, videoUrl, isVideo: "true", selfObject, users)
+            })
+        }
+
+    }
+    
     private func uploadToFirebaseStorageUsingImage(image: UIImage, isVideo: String? = "false", videoUrl: String? = nil) {
         
         let imageName = NSUUID().uuidString
@@ -368,6 +435,46 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     @objc func handleSend() {
         
         sendMessage()
+    }
+    
+    func sendMessageForAR(_ imageUrl: String? = nil,_ imageWidth: CGFloat = 0,_ imageHeight: CGFloat = 0,_ videoUrl: String? = nil, isVideo: String? = "false",_ selfObject: ChatLogController? = nil,_ users: Users? = nil) {
+        let reference = Database.database().reference().child("messages")
+        let childRef = reference.childByAutoId()
+        let fromId = Auth.auth().currentUser?.uid
+        let toID = users?.id
+        let timestamp = Date().timeIntervalSince1970
+        var values = [String: Any]()
+        
+        if let messageText = sendMessageTextField.text {
+            if imageUrl != nil && isVideo == "false" {
+                values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "imageUrl": imageUrl!, "imagewidth": imageWidth, "imageheight": imageHeight, "isVideo": "false"]
+            }
+            else {
+                if videoUrl != nil && isVideo == "true" {
+                    values = ["fromid": fromId as Any, "toid": toID as Any, "timestamp": timestamp, "videoUrl": videoUrl!,"imageUrl": imageUrl!, "imagewidth": imageWidth, "imageheight": imageHeight, "isVideo": "true"]
+                }
+                else {
+                    values = ["fromid": fromId as Any, "toid": toID as Any,"text": messageText, "timestamp": timestamp, "isVideo": "false"]
+                }
+            }
+            
+            childRef.updateChildValues(values) { (error, ref) in
+                if error != nil {
+                    print(error ?? "")
+                    return
+                }
+                guard let messageId = childRef.key else { return }
+                
+                let userMessagesRef = Database.database().reference().child("user-messages").child(fromId!).child(toID!)
+                userMessagesRef.updateChildValues([messageId: 1])
+                
+                let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!).child(fromId!)
+                recipientUserMessagesRef.updateChildValues([messageId: 1])
+                selfObject!.sendMessageTextField.text = nil
+            }
+        }
+
+        
     }
     
     func sendMessage(_ imageUrl: String? = nil,_ imageWidth: CGFloat = 0,_ imageHeight: CGFloat = 0,_ videoUrl: String? = nil, isVideo: String? = "false") {
@@ -448,13 +555,15 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         cell.textView.text = message.text
         if let messageText = message.text {
+            cell.videoZoomInView.isHidden = true
             cell.bubbleWidthAnchor?.constant = estimatedHeightForText(text: messageText).width + 32
             cell.playButton.isHidden = true
         } else if message.imageUrl != nil &&  message.isVideo! == "false" {
             cell.playButton.isHidden = true
-
+            cell.videoZoomInView.isHidden = true
            cell.bubbleWidthAnchor?.constant = 200
         } else if message.isVideo! == "true" {
+            cell.videoZoomInView.isHidden = true
             cell.playButton.isHidden = false
             cell.bubbleWidthAnchor?.constant = 200
         }
@@ -507,6 +616,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     var startingFrame: CGRect?
     var blackBackgroundView: UIView?
+    
     func performZoomInImageView(_ startingImageView: UIImageView) {
         
         startingFrame = startingImageView.superview?.convert(startingImageView.frame, to: nil)

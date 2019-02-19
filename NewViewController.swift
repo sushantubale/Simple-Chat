@@ -12,11 +12,14 @@ import SceneKit
 import ARKit
 
 class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
-    
-    func sendARVideo(_ dataURL: URL) {
+    func sendARVideo(_ dataURL: URL, _ object: ChatLogController, _ chatObject: Users) {
         print("NewVC")
+
     }
     
+    
+    var users: Users?
+        
     lazy var playButton: UIButton = {
         let playbutton = UIButton(type: .system)
         playbutton.translatesAutoresizingMaskIntoConstraints = false
@@ -88,8 +91,9 @@ class NewViewController: UIViewController, ARSCNViewDelegate, sendARVideos {
         case .authorized:
             let chvc = ChatLogController()
             chvc.chatLogDelegate = self
-            chvc.sendARVideo(data as! URL)
-            self.dismiss(animated: true, completion: nil)
+            chvc.sendARVideo(data as! URL, chvc, users!)
+            print(users)
+           self.dismiss(animated: true, completion: nil)
 
         case .restricted, .denied:
             let libraryRestrictedAlert = UIAlertController(title: "Photos access denied",
