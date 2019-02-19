@@ -433,7 +433,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
     
     @objc func handleSend() {
+        guard let messageText = self.sendMessageTextField.text else {
         
+            return
+        }
         sendMessage()
     }
     

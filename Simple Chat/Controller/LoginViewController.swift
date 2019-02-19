@@ -49,7 +49,9 @@ class LoginViewController: UIViewController {
         guard let email = loginRegisterView.emailTextField.text, let password = loginRegisterView.passwordTextField.text else {return}
         
         FirebaseHelper.handleLogin(email: email, password: password) { (user, error) in
-            if error != nil {
+            
+            if let error = error {
+                UIHelper.showAlert(msg: error.localizedDescription, viewController: self)
                 print("error = \(String(describing: error))")
             }
             else {
@@ -77,9 +79,9 @@ class LoginViewController: UIViewController {
             
             if let compressedImage = self?.loginRegisterView.profileImageView.image?.jpegData(compressionQuality: 0.1) {
                 
-                FirebaseHelper.storeData(compressedImage: compressedImage, storageRef: storageRef, completion: { (metadata, error) in
+                FirebaseHelper.storeData(compressedImage: compressedImage, storageRef: storageRef, completion: { [weak self] (metadata, error) in
                     if error != nil {
-                        print(error as Any)
+                        UIHelper.showAlert(msg: error.debugDescription, viewController: self!)
                         return
                     }
                     
@@ -117,6 +119,7 @@ class LoginViewController: UIViewController {
         let userReference = ref.child("users").child(uid)
         userReference.updateChildValues(values, withCompletionBlock: { [weak self] (error, reference) in
             if error != nil {
+                UIHelper.showAlert(msg: error.debugDescription, viewController: self!)
                 print("Error creating user")
                 return
             }
@@ -170,3 +173,4 @@ extension LoginViewController: UINavigationControllerDelegate, UIImagePickerCont
         dismiss(animated: true, completion: nil)
     }
 }
+

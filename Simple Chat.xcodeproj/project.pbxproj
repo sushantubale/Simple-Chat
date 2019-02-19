@@ -40,6 +40,9 @@
 		0A9714B2221CABC3009B4F58 /* VideoReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9714B1221CABC3009B4F58 /* VideoReviewViewController.swift */; };
 		0A9714B3221CABC3009B4F58 /* VideoReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9714B1221CABC3009B4F58 /* VideoReviewViewController.swift */; };
 		0A9714B4221CABC3009B4F58 /* VideoReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9714B1221CABC3009B4F58 /* VideoReviewViewController.swift */; };
+		0A9714BA221CC4AC009B4F58 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9714B9221CC4AC009B4F58 /* UIHelper.swift */; };
+		0A9714BB221CC4AC009B4F58 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9714B9221CC4AC009B4F58 /* UIHelper.swift */; };
+		0A9714BC221CC4AC009B4F58 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9714B9221CC4AC009B4F58 /* UIHelper.swift */; };
 		0AA96987221A8C33009AD851 /* AnyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96986221A8C33009AD851 /* AnyError.swift */; };
 		0AA96988221A8C33009AD851 /* AnyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96986221A8C33009AD851 /* AnyError.swift */; };
 		0AA96989221A8C33009AD851 /* AnyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA96986221A8C33009AD851 /* AnyError.swift */; };
@@ -159,6 +162,7 @@
 		0A51F07421C3780300C7D907 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		0A5BB52721EAA88200C826D3 /* uploadImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadImage.png; sourceTree = "<group>"; };
 		0A9714B1221CABC3009B4F58 /* VideoReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoReviewViewController.swift; sourceTree = "<group>"; };
+		0A9714B9221CC4AC009B4F58 /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		0AA96986221A8C33009AD851 /* AnyError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyError.swift; sourceTree = "<group>"; };
 		0AA9698A221A8C5F009AD851 /* Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
 		0AA9698E221A8CA2009AD851 /* AsyncType+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AsyncType+Debug.swift"; sourceTree = "<group>"; };
@@ -241,6 +245,7 @@
 			isa = PBXGroup;
 			children = (
 				0A27C7F3220F5C41009C0803 /* LoginRegisterView.swift */,
+				0A9714B9221CC4AC009B4F58 /* UIHelper.swift */,
 			);
 			path = ViewHelper;
 			sourceTree = "<group>";
@@ -551,6 +556,7 @@
 				0AA969A3221A8E0E009AD851 /* Errors.swift in Sources */,
 				0A2B5741220FA89700AF4CE4 /* UserCell.swift in Sources */,
 				0A3C9150221A629200F590CD /* NewViewController.swift in Sources */,
+				0A9714BA221CC4AC009B4F58 /* UIHelper.swift in Sources */,
 				0AA969C3221A8FA5009AD851 /* NoError.swift in Sources */,
 				0A51F07021C3748B00C7D907 /* MessageViewController.swift in Sources */,
 				0AA969AF221A8E60009AD851 /* Future.swift in Sources */,
@@ -593,6 +599,7 @@
 				0AA96994221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */,
 				0AA96990221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */,
 				0AA969C0221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */,
+				0A9714BB221CC4AC009B4F58 /* UIHelper.swift in Sources */,
 				0AA969B4221A8E90009AD851 /* InvalidationToken.swift in Sources */,
 				0AA969B0221A8E60009AD851 /* Future.swift in Sources */,
 				0AC09360221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */,
@@ -635,6 +642,7 @@
 				0AA96995221A8CD4009AD851 /* AsyncType+ResultType.swift in Sources */,
 				0AA96991221A8CA2009AD851 /* AsyncType+Debug.swift in Sources */,
 				0AA969C1221A8F8D009AD851 /* NSOperationQueue+BrightFutures.swift in Sources */,
+				0A9714BC221CC4AC009B4F58 /* UIHelper.swift in Sources */,
 				0AA969B5221A8E90009AD851 /* InvalidationToken.swift in Sources */,
 				0AA969B1221A8E60009AD851 /* Future.swift in Sources */,
 				0AC09361221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */,
