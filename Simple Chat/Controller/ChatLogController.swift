@@ -433,7 +433,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
     
     @objc func handleSend() {
+        guard let messageText = self.sendMessageTextField.text else {
         
+            return
+        }
         sendMessage()
     }
     
@@ -617,6 +620,14 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     var startingFrame: CGRect?
     var blackBackgroundView: UIView?
     
+    func runVideosInFullScreen(name: String, type: String, url: URL) {
+        let videoViewController = VideoViewController()
+        videoViewController.url = url
+        DispatchQueue.main.async {
+            self.navigationController?.pushViewController(videoViewController, animated: true)
+        }
+    }
+
     func performZoomInImageView(_ startingImageView: UIImageView) {
         
         startingFrame = startingImageView.superview?.convert(startingImageView.frame, to: nil)

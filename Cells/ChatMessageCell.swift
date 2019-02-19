@@ -8,6 +8,8 @@
 
 import UIKit
 import AVKit
+import MediaPlayer
+import AVFoundation
 
 class ChatMessageCell: UICollectionViewCell {
     
@@ -125,8 +127,6 @@ class ChatMessageCell: UICollectionViewCell {
         videoZoomInView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
         videoZoomInView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
         videoZoomInView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
-
-
     }
 
     @objc func handleVideoZoomInView() {
@@ -163,8 +163,13 @@ class ChatMessageCell: UICollectionViewCell {
     
     @objc func handleZoomTap(tapGesture: UITapGestureRecognizer) {
         
-        let imageView = tapGesture.view as? UIImageView
-        chatLogController?.performZoomInImageView(imageView!)
+        if message?.videoUrl != nil {
+            let url = URL(string: (message?.videoUrl)!)
+            chatLogController?.runVideosInFullScreen(name: "someVideo", type: ".mov", url: url!)
+        } else {
+            let imageView = tapGesture.view as? UIImageView
+            chatLogController?.performZoomInImageView(imageView!)
+        }
     }
     
     func loadMessageImage(_ url: String) {
