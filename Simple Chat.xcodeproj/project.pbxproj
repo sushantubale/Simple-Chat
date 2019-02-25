@@ -24,6 +24,7 @@
 		0A3C9150221A629200F590CD /* NewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C914F221A629200F590CD /* NewViewController.swift */; };
 		0A3C9151221A629200F590CD /* NewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C914F221A629200F590CD /* NewViewController.swift */; };
 		0A3C9152221A629200F590CD /* NewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C914F221A629200F590CD /* NewViewController.swift */; };
+		0A498471222461C300807BA9 /* pro.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A498470222461C200807BA9 /* pro.png */; };
 		0A4AD0A221C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
 		0A4AD0A321C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
 		0A4AD0A421C19FFA006C8445 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */; };
@@ -100,6 +101,7 @@
 		0AA969CF221A901B009AD851 /* PixelBufferFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */; };
 		0AA969D0221A901B009AD851 /* PixelBufferFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */; };
 		0AA969D1221A901B009AD851 /* PixelBufferFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */; };
+		0ABBFFDB221DF757004C7D44 /* recordButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABBFFDA221DF756004C7D44 /* recordButton.png */; };
 		0AC0935F221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */; };
 		0AC09360221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */; };
 		0AC09361221A9265009E5059 /* SceneKitVideoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */; };
@@ -147,6 +149,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		0A7E037A22238AD800399A7C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0A12E7A621E57BFC00C8C87F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		0A21622C21CAE37F0046859B /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
@@ -154,6 +169,7 @@
 		0A27C7F8220F7556009C0803 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		0A2B5740220FA89700AF4CE4 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		0A3C914F221A629200F590CD /* NewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewViewController.swift; sourceTree = "<group>"; };
+		0A498470222461C200807BA9 /* pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pro.png; sourceTree = "<group>"; };
 		0A4AD0A121C19FFA006C8445 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		0A4AD0A621C1C8F0006C8445 /* profile_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile_picture.png; sourceTree = "<group>"; };
 		0A4AD0A821C1CADD006C8445 /* profile_placeholder.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = profile_placeholder.jpg; sourceTree = "<group>"; };
@@ -182,6 +198,7 @@
 		0AA969C6221A8FC9009AD851 /* Number+BrightFutures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Number+BrightFutures.swift"; sourceTree = "<group>"; };
 		0AA969CA221A8FEB009AD851 /* Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
 		0AA969CE221A901B009AD851 /* PixelBufferFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelBufferFactory.swift; sourceTree = "<group>"; };
+		0ABBFFDA221DF756004C7D44 /* recordButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recordButton.png; sourceTree = "<group>"; };
 		0AC0935E221A9265009E5059 /* SceneKitVideoRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitVideoRecorder.swift; sourceTree = "<group>"; };
 		0AC09362221A9349009E5059 /* Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
 		0AC0936E221A9790009E5059 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
@@ -322,6 +339,8 @@
 		0AEE885921C18C2200D03B0D = {
 			isa = PBXGroup;
 			children = (
+				0A498470222461C200807BA9 /* pro.png */,
+				0ABBFFDA221DF756004C7D44 /* recordButton.png */,
 				0A9714B1221CABC3009B4F58 /* VideoReviewViewController.swift */,
 				0AC0938A221BC994009E5059 /* CeilingFanLamp.scn */,
 				0AC0938F221BC9BB009E5059 /* CeilingFanLamp.obj */,
@@ -402,6 +421,7 @@
 				0AEE885E21C18C2200D03B0D /* Sources */,
 				0AEE885F21C18C2200D03B0D /* Frameworks */,
 				0AEE886021C18C2200D03B0D /* Resources */,
+				0A7E037A22238AD800399A7C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -499,10 +519,12 @@
 				0AEE887321C18C2300D03B0D /* LaunchScreen.storyboard in Resources */,
 				0AC09393221BC9BB009E5059 /* CeilingFanLamp.obj in Resources */,
 				0AEE887021C18C2300D03B0D /* Assets.xcassets in Resources */,
+				0A498471222461C300807BA9 /* pro.png in Resources */,
 				0A4DC8C02209FDC100B171CF /* play3.png in Resources */,
 				0A5BB52821EAA88200C826D3 /* uploadImage.png in Resources */,
 				0A4AD0A721C1C8F0006C8445 /* profile_picture.png in Resources */,
 				0A4AD0A921C1CADD006C8445 /* profile_placeholder.jpg in Resources */,
+				0ABBFFDB221DF757004C7D44 /* recordButton.png in Resources */,
 				0AEE886B21C18C2200D03B0D /* Main.storyboard in Resources */,
 				0AFF5ED521C6082700F0A54E /* GoogleService-Info.plist in Resources */,
 				0AC0938B221BC994009E5059 /* CeilingFanLamp.scn in Resources */,
@@ -815,6 +837,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 276TT98E76;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+				);
 				INFOPLIST_FILE = "Simple Chat/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -833,6 +861,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 276TT98E76;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+				);
 				INFOPLIST_FILE = "Simple Chat/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -851,6 +885,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+				);
 				INFOPLIST_FILE = "Simple ChatTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -871,6 +909,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+				);
 				INFOPLIST_FILE = "Simple ChatTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -890,6 +932,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+				);
 				INFOPLIST_FILE = "Simple ChatUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -909,6 +955,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Simple\\ Chat",
+				);
 				INFOPLIST_FILE = "Simple ChatUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

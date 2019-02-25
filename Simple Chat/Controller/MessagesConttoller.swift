@@ -52,18 +52,16 @@ class MessagesConttoller: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.register(UserCell.self, forCellReuseIdentifier: MessagesConttoller.cellID)
         view.backgroundColor = .white
         tableView.allowsMultipleSelectionDuringEditing = true
         tableView.delegate = self
         tableView.dataSource = self
-
         navigationItem.leftBarButtonItem = logoutButton
         navigationItem.rightBarButtonItem = newMessageButton
-        
     }
-    
+
     func observeUserMessages() {
         
         guard let uid = Auth.auth().currentUser?.uid else {
@@ -283,6 +281,7 @@ class MessagesConttoller: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: MessagesConttoller.cellID, for: indexPath) as? UserCell
+        
         if let cell = cell {
             setNameAndProfileImage(cell, indexPath: indexPath)
             if let messageTimestampDoubleVal = messages[indexPath.row].timestamp?.doubleValue {
@@ -324,7 +323,6 @@ class MessagesConttoller: UITableViewController {
                 return
             }
         }
-        
         
         if let url = URL(string: url) {
             URLSession.shared.dataTask(with: url) { (data, response, error) in

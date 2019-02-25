@@ -30,10 +30,11 @@ class LoginRegisterView: UIView {
         let button = UIButton()
         button.setTitle("Register", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
+        button.backgroundColor = .white
         button.layer.cornerRadius = 5
         button.layer.masksToBounds = true
-        button.titleLabel?.font = .systemFont(ofSize: 24)
+        button.titleLabel?.font = .systemFont(ofSize: 20)
+        button.setTitleColor(.black, for: .normal)
         return button
     }()
     
@@ -84,8 +85,13 @@ class LoginRegisterView: UIView {
     let profileImageView: UIImageView = {
         let profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        profileImageView.image = UIImage(named: "profile_placeholder.jpg")
+        profileImageView.image = UIImage(named: "pro.png")
         profileImageView.contentMode = .scaleAspectFill
+        profileImageView.layer.borderWidth = 2
+        profileImageView.layer.masksToBounds = false
+        profileImageView.layer.borderColor = UIColor.black.cgColor
+        profileImageView.layer.cornerRadius = profileImageView.frame.height/2
+        profileImageView.clipsToBounds = true
         profileImageView.isUserInteractionEnabled = true
         return profileImageView
     }()

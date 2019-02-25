@@ -11,15 +11,28 @@ import Firebase
 
 class LoginViewController: UIViewController {
     
+    var profileImageAssigned = false
     var viewController: MessagesConttoller? = nil
-    
+    var actInd: UIActivityIndicatorView = UIActivityIndicatorView()
+    var container: UIView = UIView()
+    var loadingView: UIView = UIView()
+
     lazy var loginRegisterView = LoginRegisterView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBackground()
         self.view.addSubview(loginRegisterView)
         setupActions()
-        view.backgroundColor = UIColor(r: 61, g: 91, b: 151)
+    }
+    
+    func setupBackground() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [UIColor.purple.cgColor, UIColor.orange.cgColor]
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 1)
+        gradientLayer.frame = view.bounds
+        view.layer.addSublayer(gradientLayer)
     }
     
     func setupActions() {
@@ -44,17 +57,52 @@ class LoginViewController: UIViewController {
         loginRegisterView.passwordTextfieldHeightConstraint?.isActive = true
     }
     
+    func hideActivityIndicator(uiView: UIView) {
+        actInd.stopAnimating()
+        container.removeFromSuperview()
+    }
+
+    func showActivityIndicatory(uiView: UIView) {
+        container.frame = uiView.frame
+        container.center = uiView.center
+        container.backgroundColor = UIColorFromHex(rgbValue: 0xffffff, alpha: 0.3)
+
+        loadingView.frame = CGRect(x:0, y:0, width:80, height:80)
+        loadingView.center = uiView.center
+        loadingView.backgroundColor = UIColorFromHex(rgbValue: 0x444444, alpha: 0.7)
+        loadingView.clipsToBounds = true
+        loadingView.layer.cornerRadius = 10
+        
+        actInd.frame = CGRect(x:0.0, y:0.0, width:40.0, height:40.0);
+        actInd.style =
+            UIActivityIndicatorView.Style.whiteLarge
+        actInd.center = CGPoint(x: loadingView.frame.size.width / 2, y: loadingView.frame.size.height / 2)
+        loadingView.addSubview(actInd)
+        container.addSubview(loadingView)
+        uiView.addSubview(container)
+        actInd.startAnimating()
+    }
+    
+    func UIColorFromHex(rgbValue:UInt32, alpha:Double=1.0)->UIColor {
+        let red = CGFloat((rgbValue & 0xFF0000) >> 16)/256.0
+        let green = CGFloat((rgbValue & 0xFF00) >> 8)/256.0
+        let blue = CGFloat(rgbValue & 0xFF)/256.0
+        return UIColor(red:red, green:green, blue:blue, alpha:CGFloat(alpha))
+    }
+
     func handlelogin() {
         
         guard let email = loginRegisterView.emailTextField.text, let password = loginRegisterView.passwordTextField.text else {return}
-        
+        showActivityIndicatory(uiView: self.view)
         FirebaseHelper.handleLogin(email: email, password: password) { (user, error) in
             
             if let error = error {
+                self.hideActivityIndicator(uiView: self.view)
                 UIHelper.showAlert(msg: error.localizedDescription, viewController: self)
                 print("error = \(String(describing: error))")
             }
             else {
+                self.hideActivityIndicator(uiView: self.view)
                 self.viewController?.fetchUserAndSetNavTitle()
                 self.dismiss(animated: true, completion: nil)
             }
@@ -67,9 +115,17 @@ class LoginViewController: UIViewController {
             return
         }
         
+        if self.profileImageAssigned == false {
+            UIHelper.showAlert(msg: "Please enter profile image view.", viewController: self)
+            return
+        }
+        
+        showActivityIndicatory(uiView: self.view)
         FirebaseHelper.handleRegister(email: email, password: password, name: name) { [weak self] (user, error) in
             
             if error != nil {
+                self!.hideActivityIndicator(uiView: self!.view)
+                UIHelper.showAlert(msg: error!.localizedDescription, viewController: self!)
                 print("error is \(String(describing: error))")
                 return
             }
@@ -123,6 +179,7 @@ class LoginViewController: UIViewController {
                 print("Error creating user")
                 return
             }
+            self?.hideActivityIndicator(uiView: (self?.view)!)
             self?.viewController?.fetchUserAndSetNavTitle()
             self?.dismiss(animated: true, completion: nil)
         })
@@ -169,6 +226,7 @@ extension LoginViewController: UINavigationControllerDelegate, UIImagePickerCont
         
         DispatchQueue.main.async {
             self.loginRegisterView.profileImageView.image = selectedImage
+            self.profileImageAssigned = true
         }
         dismiss(animated: true, completion: nil)
     }
