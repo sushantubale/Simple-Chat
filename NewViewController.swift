@@ -12,18 +12,15 @@ import SceneKit
 import ARKit
 
 class NewViewController: UIViewController, ARSCNViewDelegate {
-    
     var users: Users?
         
     lazy var playButton: UIButton = {
         let playbutton = UIButton(type: .system)
         playbutton.translatesAutoresizingMaskIntoConstraints = false
-        playbutton.setImage(UIImage(named: "play3.png"), for: .normal)
-        playbutton.tintColor = .white
         return playbutton
     }()
     
-     var sceneView: ARSCNView!
+    var sceneView: ARSCNView!
 
     var recorder: SceneKitVideoRecorder?
 
@@ -33,7 +30,7 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Back", style: .plain, target: self, action: #selector(backAction))
         sceneView = ARSCNView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height), options: [:])
         sceneView.delegate = self
-        playButton.addTarget(self, action: #selector(startRecording(sender:)), for: UIControl.Event.touchDown)
+        playButton.addTarget(self, action: #selector(startRecording(sender:)), for: .touchDown)
         playButton.addTarget(self, action: #selector(stopRecording(sender:)), for:  .touchUpInside)
         
         // Show statistics such as fps and timing information
@@ -41,15 +38,16 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a new scene
         let scene = SCNScene(named: "CeilingFanLamp.scn")
-        
         // Set the scene to the view
         sceneView.scene = scene!
         
+        
+        
         self.sceneView.addSubview(playButton)
-        playButton.centerXAnchor.constraint(equalTo: self.sceneView.centerXAnchor).isActive = true
-        playButton.centerYAnchor.constraint(equalTo: self.sceneView.centerYAnchor).isActive = true
-        playButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        playButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        playButton.rightAnchor.constraint(equalTo: self.sceneView.rightAnchor, constant: -160).isActive = true
+        playButton.bottomAnchor.constraint(equalTo: self.sceneView.bottomAnchor, constant: -40).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
 
         self.view.addSubview(sceneView)
         recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
@@ -61,16 +59,14 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Create a session configuration
+        self.definesPresentationContext = true
+        playButton.setImage(UIImage(named: "recordButton.png"), for: UIControl.State.normal)
         let configuration = ARWorldTrackingConfiguration()
-        
-        // Run the view's session
         sceneView.session.run(configuration)
     }
     
     @objc func startRecording (sender: UIButton) {
-        sender.backgroundColor = .red
+        sender.tintColor = .clear
         self.recorder?.startWriting()
     }
     
