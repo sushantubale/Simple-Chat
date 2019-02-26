@@ -35,7 +35,13 @@ class VideoReviewViewController: UIViewController, sendARVideos {
         super.viewDidLoad()
 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "X", style: .plain, target: self, action: #selector(backAction))
+        self.navigationController?.navigationBar.setGradientBackground(colors: [
+            UIColor.red.cgColor,
+            UIColor.green.cgColor,
+            UIColor.blue.cgColor
+            ])
         
+
         let fileURL =  url
         let player = AVPlayer(url: fileURL!)
         let resetPlayer = {

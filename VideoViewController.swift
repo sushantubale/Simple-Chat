@@ -29,6 +29,13 @@ class VideoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.navigationController?.navigationBar.setGradientBackground(colors: [
+            UIColor.red.cgColor,
+            UIColor.green.cgColor,
+            UIColor.blue.cgColor
+            ])
+        
+
         let fileURL =  url
         let player = AVPlayer(url: fileURL!)
         let resetPlayer = {

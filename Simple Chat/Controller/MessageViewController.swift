@@ -19,7 +19,6 @@ class MessageViewController: UITableViewController {
         let leftBarButton = UIBarButtonItem()
         leftBarButton.title = "Cancel"
         leftBarButton.style = .plain
-        leftBarButton.tintColor = .white
         leftBarButton.target = self
         leftBarButton.action = #selector(cancelTapped)
         return leftBarButton
@@ -27,7 +26,13 @@ class MessageViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.setGradientBackground(colors: [
+            UIColor.red.cgColor,
+            UIColor.green.cgColor,
+            UIColor.blue.cgColor
+            ])
         
+
         self.tableView.register(UserCell.self, forCellReuseIdentifier: MessageViewController.cellId)
         navigationItem.leftBarButtonItem = leftBarButton
         

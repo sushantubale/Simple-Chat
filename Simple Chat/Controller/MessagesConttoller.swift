@@ -34,7 +34,8 @@ class MessagesConttoller: UITableViewController {
     lazy var logoutButton: UIBarButtonItem = {
         let logoutButton = UIBarButtonItem()
         logoutButton.title = "Logout"
-        logoutButton.style = UIBarButtonItem.Style.plain
+        logoutButton.style = .plain
+        logoutButton.tintColor = . white
         logoutButton.target = self
         logoutButton.action = #selector(handleLogout)
         return logoutButton
@@ -43,7 +44,8 @@ class MessagesConttoller: UITableViewController {
     lazy var newMessageButton: UIBarButtonItem = {
         let newMessageButton = UIBarButtonItem()
         newMessageButton.image = UIImage(named: "new_message")
-        newMessageButton.style = UIBarButtonItem.Style.plain
+        newMessageButton.style = .plain
+        newMessageButton.tintColor = . white
         newMessageButton.target = self
         newMessageButton.action = #selector(newMessageTapped)
         return newMessageButton
@@ -52,6 +54,12 @@ class MessagesConttoller: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.navigationController?.navigationBar.setGradientBackground(colors: [
+            UIColor.red.cgColor,
+            UIColor.green.cgColor,
+            UIColor.blue.cgColor
+            ])
 
         tableView.register(UserCell.self, forCellReuseIdentifier: MessagesConttoller.cellID)
         view.backgroundColor = .white
@@ -380,5 +388,29 @@ class MessagesConttoller: UITableViewController {
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
         chatLogController.chatLogUser = user
         navigationController?.pushViewController(chatLogController, animated: true)
+    }
+}
+
+
+extension UINavigationBar {
+    func setGradientBackground(colors: [Any]) {
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.locations = [0.0 , 0.5, 1.0]
+        gradient.startPoint = CGPoint(x: 0.0, y: 1.0)
+        gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
+        
+        var updatedFrame = self.bounds
+        updatedFrame.size.height += self.frame.origin.y
+        gradient.frame = updatedFrame
+        gradient.colors = colors;
+        self.setBackgroundImage(self.image(fromLayer: gradient), for: .default)
+    }
+    
+    func image(fromLayer layer: CALayer) -> UIImage {
+        UIGraphicsBeginImageContext(layer.frame.size)
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        let outputImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return outputImage!
     }
 }
