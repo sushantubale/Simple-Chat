@@ -35,7 +35,11 @@ class LoginViewController: UIViewController {
     
     func setupBackground() {
         let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [UIColor.purple.cgColor, UIColor.orange.cgColor]
+        gradientLayer.colors = [
+            UIColor.red.cgColor,
+            UIColor.green.cgColor,
+            UIColor.blue.cgColor
+        ]
         gradientLayer.startPoint = CGPoint(x: 0, y: 0)
         gradientLayer.endPoint = CGPoint(x: 1, y: 1)
         gradientLayer.frame = view.bounds

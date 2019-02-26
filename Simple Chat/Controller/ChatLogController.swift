@@ -25,10 +25,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     var chatLogUser: Users?  {
         didSet {
             navigationItem.title = chatLogUser?.name
+            
             observeLoggedInUserMessages()
         }
     }
-    var backButtonName: String?
     
     lazy var sendMessageTextField: UITextField = {
         let sendMessageTextField = UITextField()
@@ -92,6 +92,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
 
     @objc func doneButtonAction() {
         self.view.endEditing(true)
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     func setupKeyboardObservers() {
@@ -233,11 +237,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         alert.addAction(UIAlertAction(title: "Send Photos or Videos", style: .default , handler:{ (UIAlertAction)in
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
+            imagePicker.navigationBar.tintColor = .black
             imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String, kUTTypeGIF as String]
             imagePicker.sourceType = .photoLibrary
             imagePicker.allowsEditing = true
             self.present(imagePicker, animated: true, completion: nil)
-
         }))
         
         alert.addAction(UIAlertAction(title: "Record and Send AR", style: .default , handler:{ (UIAlertAction)in

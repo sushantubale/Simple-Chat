@@ -27,6 +27,12 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.navigationBar.setGradientBackground(colors: [
+            UIColor.red.cgColor,
+            UIColor.green.cgColor,
+            UIColor.blue.cgColor
+            ])
+
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Back", style: .plain, target: self, action: #selector(backAction))
         sceneView = ARSCNView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height), options: [:])
         sceneView.delegate = self
@@ -43,7 +49,7 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
         
         self.sceneView.addSubview(playButton)
         playButton.rightAnchor.constraint(equalTo: self.sceneView.rightAnchor, constant: -160).isActive = true
-        playButton.bottomAnchor.constraint(equalTo: self.sceneView.bottomAnchor, constant: -40).isActive = true
+        playButton.bottomAnchor.constraint(equalTo: self.sceneView.bottomAnchor, constant: -100).isActive = true
         playButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         playButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
 
