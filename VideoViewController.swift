@@ -42,8 +42,6 @@ class VideoViewController: UIViewController {
         playerLayer = AVPlayerLayer(player: player)
         playerLayer!.frame = view.bounds
         view.layer.insertSublayer(playerLayer!, at: 0)
-
-        // Do any additional setup after loading the view.
     }
     
 

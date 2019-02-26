@@ -19,6 +19,7 @@ class MessageViewController: UITableViewController {
         let leftBarButton = UIBarButtonItem()
         leftBarButton.title = "Cancel"
         leftBarButton.style = .plain
+        leftBarButton.tintColor = .white
         leftBarButton.target = self
         leftBarButton.action = #selector(cancelTapped)
         return leftBarButton
@@ -43,6 +44,9 @@ class MessageViewController: UITableViewController {
                 return
             }
             if let dictionary = snapshot.value as? [String: Any] {
+                if Auth.auth().currentUser?.uid ==  snapshot.key {
+                    return
+                }
                 let user = Users()
                 user.id = snapshot.key
                 user.setValuesForKeys(dictionary)
@@ -55,7 +59,6 @@ class MessageViewController: UITableViewController {
     }
     
     @objc func cancelTapped() {
-        
         dismiss(animated: true, completion: nil)
     }
     

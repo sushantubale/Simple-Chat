@@ -41,8 +41,6 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene!
         
-        
-        
         self.sceneView.addSubview(playButton)
         playButton.rightAnchor.constraint(equalTo: self.sceneView.rightAnchor, constant: -160).isActive = true
         playButton.bottomAnchor.constraint(equalTo: self.sceneView.bottomAnchor, constant: -40).isActive = true
@@ -59,19 +57,21 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        playButton.backgroundColor = .clear
         self.definesPresentationContext = true
         playButton.setImage(UIImage(named: "recordButton.png"), for: UIControl.State.normal)
+        playButton.tintColor = .blue
         let configuration = ARWorldTrackingConfiguration()
         sceneView.session.run(configuration)
     }
     
     @objc func startRecording (sender: UIButton) {
-        sender.tintColor = .clear
+        sender.tintColor = .red
         self.recorder?.startWriting()
     }
     
     @objc func stopRecording (sender: UIButton) {
-        sender.backgroundColor = .white
+        sender.backgroundColor = .clear
         self.recorder?.finishWriting().onSuccess { [weak self] url in
             print("Recording Finished", url)
             self?.checkAuthorizationAndPresentActivityController(toShare: url, using: self!)
@@ -108,14 +108,8 @@ class NewViewController: UIViewController, ARSCNViewDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         // Pause the view's session
         sceneView.session.pause()
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
     }
     
     // MARK: - ARSCNViewDelegate

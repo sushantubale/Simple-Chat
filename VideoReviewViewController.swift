@@ -50,14 +50,20 @@ class VideoReviewViewController: UIViewController, sendARVideos {
         playerLayer!.frame = view.bounds
         view.layer.insertSublayer(playerLayer!, at: 0)
         
-        let sendButton = UIButton()
+        let sendButton = UIButton(type: .roundedRect)
+        self.view.addSubview(sendButton)
+        sendButton.setImage(UIImage(named: "sendButton1.png"), for: .normal)
+        sendButton.backgroundColor = .clear
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        sendButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        sendButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -80).isActive = true
+        sendButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        sendButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+
         sendButton.setTitle("Send", for: .normal)
-        sendButton.backgroundColor = .red
         sendButton.setTitleColor(UIColor.blue, for: .normal)
-        sendButton.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         sendButton.center = self.view.center
         sendButton.addTarget(self, action: #selector(sendARVideoToChatLogController), for: .touchUpInside)
-        self.view.addSubview(sendButton)
     }
     
    @objc func sendARVideoToChatLogController() {

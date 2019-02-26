@@ -10,7 +10,6 @@ pod 'Firebase/Database'
 pod 'Firebase/Storage'
 pod 'Firebase/Auth'
 
-
   # Pods for Simple Chat
 
   target 'Simple ChatTests' do

@@ -182,7 +182,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         let sendButton = UIButton()
         sendButton.setTitle("Send", for: .normal)
-        sendButton.setTitleColor(.blue, for: .normal)
+        sendButton.setTitleColor(UIColor(r: 0, g: 137, b: 249), for: .normal)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         sendMessageView.addSubview(sendButton)
         sendButton.rightAnchor.constraint(equalTo: sendMessageView.rightAnchor, constant: -5).isActive = true

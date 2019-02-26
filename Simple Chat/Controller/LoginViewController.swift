@@ -166,7 +166,6 @@ class LoginViewController: UIViewController {
         } else {
             handleRegister()
         }
-        
     }
     
     private func storeUserData(uid: String, values: [String: AnyObject]) {
